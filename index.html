@@ -295,39 +295,70 @@
 
         .reels {
             width: 100%;
-            display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
-            background: linear-gradient(135deg, #1c0f38 0%, #0d0618 100%);
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+            background: linear-gradient(180deg, #070310 0%, #170b30 16%, #170b30 84%, #070310 100%);
             border: 2px solid rgba(255, 215, 0, 0.35); border-radius: 18px;
-            padding: 12px;
-            box-shadow: 0 10px 34px rgba(0,0,0,0.65), 0 0 26px rgba(255, 215, 0, 0.12), inset 0 0 40px rgba(110, 0, 255, 0.18);
+            padding: 14px 12px;
+            box-shadow: 0 10px 34px rgba(0,0,0,0.65), 0 0 26px rgba(255, 215, 0, 0.12), inset 0 22px 34px rgba(0,0,0,0.6), inset 0 -22px 34px rgba(0,0,0,0.6);
             transform: perspective(1100px) rotateX(6deg);
             transform-origin: 50% 100%;
+            position: relative; overflow: hidden;
         }
-        .reel { display: flex; flex-direction: column; gap: 8px; transform-style: preserve-3d; }
-        .cell {
-            aspect-ratio: 1 / 1; border-radius: 14px;
+        .reels::after {
+            content: ''; position: absolute; inset: -40%;
+            background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.09) 50%, transparent 58%);
+            transform: translateX(-72%);
+            animation: reelShine 7s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes reelShine { 0%, 70% { transform: translateX(-72%); } 90%, 100% { transform: translateX(72%); } }
+        .reel { display: flex; flex-direction: column; gap: 10px; transform-style: preserve-3d; position: relative; }
+        .reel + .reel::before {
+            content: ''; position: absolute; left: -7px; top: 3%; bottom: 3%; width: 2px;
+            background: linear-gradient(180deg, transparent, rgba(255,215,0,0.4) 25%, rgba(255,215,0,0.4) 75%, transparent);
+            border-radius: 2px;
+        }
+        .cell { aspect-ratio: 1 / 1; position: relative; user-select: none; }
+        .sym-art {
+            position: absolute; inset: 0; border-radius: 26%;
+            background-size: cover; background-position: center;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.55), inset 0 2px 5px rgba(255,255,255,0.14), inset 0 -4px 10px rgba(0,0,0,0.45);
+            transition: transform 0.18s, box-shadow 0.18s;
+        }
+        .art-label {
+            position: absolute; bottom: 4%; left: 50%; transform: translateX(-50%);
+            font-size: 0.58rem; font-weight: 900; letter-spacing: 1.5px;
+            padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.6); z-index: 2;
+        }
+        .art-label.wild { background: linear-gradient(180deg, #ffe97a, #c98a00); color: #3a2400; }
+        .art-label.scatter { background: linear-gradient(180deg, #ff6eb0, #d1006b); color: #fff; }
+        /* legacy tile look kept only for the BONUS badge symbol */
+        .cell.tile {
+            border-radius: 14px;
             background: radial-gradient(circle at 50% 22%, #412b6b 0%, #241647 55%, #120826 100%);
             border: 1px solid rgba(255,255,255,0.09);
             box-shadow: inset 0 2px 6px rgba(255,255,255,0.06), inset 0 -3px 8px rgba(0,0,0,0.4);
             display: flex; align-items: center; justify-content: center;
             font-size: clamp(1.4rem, 7vw, 2.2rem); font-weight: 900;
-            transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
-            user-select: none;
         }
         .reel.spinning .cell { filter: blur(3px) brightness(1.15); animation: cellTumble 0.16s linear infinite; }
         @keyframes cellTumble { 0% { transform: translateY(-12px) scaleY(1.18); } 100% { transform: translateY(12px) scaleY(0.85); } }
         .reel.land .cell { animation: landBounce 0.25s ease; }
         @keyframes landBounce { 0% { transform: scale(1.08); } 100% { transform: scale(1); } }
-        .cell.win {
-            border-color: var(--gold-glow);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.65), inset 0 0 14px rgba(255, 215, 0, 0.3);
+        .cell.win .sym-art {
+            box-shadow: 0 0 22px rgba(255, 215, 0, 0.85), 0 0 46px rgba(255, 215, 0, 0.35), inset 0 2px 5px rgba(255,255,255,0.2);
             animation: winPulse 0.6s ease-in-out infinite alternate;
+            z-index: 2;
         }
+        .cell.scatter-glow .sym-art { box-shadow: 0 0 22px rgba(255, 45, 149, 0.85), 0 0 46px rgba(255, 45, 149, 0.35); z-index: 2; }
+        .cell.bonus-glow .sym-art { box-shadow: 0 0 22px rgba(255, 179, 0, 0.85), 0 0 46px rgba(255, 179, 0, 0.35); z-index: 2; }
+        .cell.tile.bonus-glow {
+            border-color: #ffb300;
+            box-shadow: 0 0 20px rgba(255, 179, 0, 0.65), inset 0 0 14px rgba(255, 179, 0, 0.3);
+        }
+        .pay-art { width: 36px; height: 36px; border-radius: 26%; object-fit: cover; vertical-align: middle; box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
         @keyframes winPulse { from { transform: translateZ(0) scale(1); } to { transform: translateZ(34px) scale(1.1); } }
-        .cell.scatter-glow {
-            border-color: var(--neon-pink);
-            box-shadow: 0 0 20px rgba(255, 45, 149, 0.65);
-        }
 
         .win-display {
             min-height: 2.4rem; margin: 10px 0 2px;
@@ -452,10 +483,6 @@
             animation: nuggetPop 0.3s ease;
         }
         @keyframes nuggetPop { 0% { transform: scale(0.7); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
-        .cell.bonus-glow {
-            border-color: #ffb300;
-            box-shadow: 0 0 20px rgba(255, 179, 0, 0.65), inset 0 0 14px rgba(255, 179, 0, 0.3);
-        }
 
         /* ---------- Paytable modal ---------- */
         .modal-backdrop {
@@ -492,7 +519,7 @@
         @media (prefers-reduced-motion: reduce) {
             .promo-banner, .fs-banner { animation: none; }
             .game-wrapper, .cell { transition: none; }
-            .reel.spinning .cell, .spin-btn::after, .float-coin, .marquee span { animation: none; }
+            .reel.spinning .cell, .spin-btn::after, .float-coin, .marquee span, .reels::after { animation: none; }
             .game-wrapper .shine { display: none; }
             .reels { transform: none; }
         }
@@ -844,6 +871,32 @@
         THEMES['Gold Rush'].push({ id: 'bonus', glyph: 'BONUS', color: '#ffb300', weight: 2, bonus: true });
 
         var SYM = THEMES['Wild Safari'];
+
+        /* Illustrated symbol art: symbols/<key>.jpg ; index aligns with THEMES glyph order (bonus has no art) */
+        var SYM_ART = {
+            'Wild Safari': ['wild-safari/lion', 'shared/wild', 'wild-safari/elephant', 'wild-safari/giraffe', 'wild-safari/palm', 'wild-safari/coconut', 'wild-safari/parrot', 'wild-safari/banana', 'shared/scatter'],
+            'Volt Strike': ['volt-strike/bolt', 'shared/wild', 'volt-strike/battery', 'volt-strike/storm', 'volt-strike/bulb', 'volt-strike/plug', 'volt-strike/gear', 'volt-strike/nut', 'shared/scatter'],
+            'Mystic Fortune': ['mystic-fortune/crystalball', 'shared/wild', 'mystic-fortune/moon', 'mystic-fortune/star', 'mystic-fortune/joker', 'mystic-fortune/key', 'mystic-fortune/candle', 'mystic-fortune/sparkles', 'shared/scatter'],
+            'Neon Rush': ['neon-rush/fireworks', 'shared/wild', 'neon-rush/slotmachine', 'neon-rush/cherries', 'neon-rush/disc', 'neon-rush/headphones', 'neon-rush/cassette', 'neon-rush/alien', 'shared/scatter'],
+            'Gold Rush': ['gold-rush/moneybag', 'shared/wild', 'gold-rush/pickaxe', 'gold-rush/coins', 'gold-rush/trophy', 'gold-rush/diamond', 'gold-rush/dynamite', 'gold-rush/lantern', 'shared/scatter'],
+            'Lucky Pigs': ['lucky-pigs/pigface', 'shared/wild', 'lucky-pigs/pig', 'lucky-pigs/coin', 'lucky-pigs/clover', 'lucky-pigs/corn', 'lucky-pigs/carrot', 'lucky-pigs/house', 'shared/scatter']
+        };
+        var artOK = {};
+        function symURL(key) { return 'sym-' + key.replace('/', '-') + '.jpg'; }
+        function preloadArt() {
+            var keys = [];
+            SYM.forEach(function (s) {
+                if (s.art && !(s.art in artOK)) keys.push(s.art);
+            });
+            return Promise.all(keys.map(function (k) {
+                return new Promise(function (res) {
+                    var img = new Image();
+                    img.onload = function () { artOK[k] = true; res(); };
+                    img.onerror = function () { artOK[k] = false; res(); };
+                    img.src = symURL(k);
+                });
+            }));
+        }
         var BAG = [];
         function buildBag() {
             BAG = [];
@@ -884,19 +937,22 @@
         })();
 
         function paintCell(cell, sym) {
-            cell.textContent = sym.glyph;
-            cell.style.color = sym.color;
-            cell.style.textShadow = '0 0 12px ' + sym.color + '88';
             cell.dataset.sym = sym.id;
-            cell.style.fontSize = ''; cell.style.letterSpacing = '';
-            if (sym.id === 'wild') { cell.style.borderColor = '#ffffff'; }
-            else if (sym.id === 'scatter') { cell.style.borderColor = '#ff2d95'; }
-            else if (sym.id === 'bonus') {
-                cell.style.borderColor = '#ffb300';
-                cell.style.fontSize = '0.62rem';
-                cell.style.letterSpacing = '1px';
+            if (sym.art && artOK[sym.art]) {
+                cell.classList.remove('tile');
+                cell.style.color = ''; cell.style.textShadow = '';
+                cell.style.fontSize = ''; cell.style.letterSpacing = '';
+                var label = sym.id === 'wild' ? '<span class="art-label wild">WILD</span>'
+                    : sym.id === 'scatter' ? '<span class="art-label scatter">SCATTER</span>' : '';
+                cell.innerHTML = '<div class="sym-art" style="background-image:url(\'' + symURL(sym.art) + '\')"></div>' + label;
+            } else {
+                cell.classList.add('tile');
+                cell.textContent = sym.glyph;
+                cell.style.color = sym.color;
+                cell.style.textShadow = '0 0 12px ' + sym.color + '88';
+                if (sym.id === 'bonus') { cell.style.fontSize = '0.62rem'; cell.style.letterSpacing = '1px'; }
+                else { cell.style.fontSize = ''; cell.style.letterSpacing = ''; }
             }
-            else { cell.style.borderColor = ''; }
         }
         function setReel(r, syms) {
             for (var i = 0; i < 3; i++) paintCell(reelCols[r].cells[i], syms[i]);
@@ -1166,11 +1222,14 @@
             'Mystic Fortune': 'art-mystic-fortune.jpg', 'Neon Rush': 'art-neon-rush.jpg',
             'Gold Rush': 'art-gold-rush.jpg', 'Lucky Pigs': 'art-lucky-pigs.jpg'
         };
-        function launchGame(name) {
+        async function launchGame(name) {
             gameOpen = true;
             if (ART[name]) $('gs-backdrop').style.backgroundImage = "url('" + ART[name] + "')";
             SYM = THEMES[name] || THEMES['Wild Safari'];
+            var artKeys = SYM_ART[name] || [];
+            SYM.forEach(function (s, i) { s.art = artKeys[i] || null; });
             buildBag();
+            try { await preloadArt(); } catch (e) { /* art optional: emoji fallback */ }
             buildPaytable();
             for (var k = 0; k < 5; k++) setReel(k, [rndSym(), rndSym(), rndSym()]);
             lastFocused = document.activeElement;
@@ -1226,17 +1285,21 @@
         });
 
         /* ================= Paytable ================= */
+        function symIcon(s, text) {
+            if (s.art && artOK[s.art]) return '<img class="pay-art" src="' + symURL(s.art) + '" alt="">';
+            return '<span style="color:' + s.color + '">' + text + '</span>';
+        }
         function buildPaytable() {
             var html = '';
             SYM.forEach(function (s) {
                 if (s.scatter) {
-                    html += '<div class="pay-row"><span class="pay-sym" style="color:' + s.color + '">S</span>' +
+                    html += '<div class="pay-row"><span class="pay-sym">' + symIcon(s, 'S') + '</span>' +
                         '<span class="pay-vals">3&thinsp;=&thinsp;5x &middot; 4&thinsp;=&thinsp;20x &middot; 5&thinsp;=&thinsp;100x bet</span></div>';
                 } else if (s.bonus) {
                     html += '<div class="pay-row"><span class="pay-sym" style="color:' + s.color + ';font-size:0.7rem;">BONUS</span>' +
                         '<span class="pay-vals">3+ anywhere = Gold Nugget Bonus</span></div>';
                 } else {
-                    html += '<div class="pay-row"><span class="pay-sym" style="color:' + s.color + '">' + s.glyph + '</span>' +
+                    html += '<div class="pay-row"><span class="pay-sym">' + symIcon(s, s.glyph) + '</span>' +
                         '<span class="pay-vals">3&thinsp;=&thinsp;' + s.pay[3] + ' &middot; 4&thinsp;=&thinsp;' + s.pay[4] + ' &middot; 5&thinsp;=&thinsp;' + s.pay[5] + '</span></div>';
                 }
             });
