@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Honcho's Entertainment - Premium sweeps portal lobby">
+    <title>Honcho's Entertainment | Premium Sweeps Portal</title>
+
+    <!-- Montserrat actually loads now -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-deep: #030511;
+            --gold-glow: #ffd700;
+            --neon-blue: #00f0ff;
+            --neon-pink: #ff007f;
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-dim: #a0a5c0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Montserrat', 'Arial Black', sans-serif;
+            background-color: var(--bg-deep);
+            color: #ffffff;
+            padding-bottom: 100px;
+            background-image:
+                radial-gradient(circle at 50% 0%, #141938 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, #0d0a21 0%, transparent 40%);
+            background-attachment: fixed;
+            overflow-x: hidden;
+        }
+
+        /* ---------- Header ---------- */
+        header {
+            background: linear-gradient(180deg, rgba(16, 22, 54, 0.95) 0%, rgba(6, 8, 20, 0.98) 100%);
+            backdrop-filter: blur(10px);
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--gold-glow);
+            box-shadow: 0 4px 25px rgba(255, 215, 0, 0.25);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .logo {
+            font-size: 1.2rem; font-weight: 900; color: var(--gold-glow);
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+            letter-spacing: 1.5px; text-transform: uppercase;
+        }
+
+        /* ---------- Wallet plates ---------- */
+        .wallet { display: flex; gap: 10px; }
+        .coin-box {
+            background: linear-gradient(135deg, #02040a 0%, #0f1322 100%);
+            padding: 6px 14px; border-radius: 30px;
+            font-size: 0.8rem; font-weight: 800;
+            border: 1.5px solid var(--neon-blue);
+            display: flex; align-items: center; gap: 6px;
+            box-shadow: inset 0 0 8px rgba(0, 240, 255, 0.2), 0 0 10px rgba(0, 240, 255, 0.1);
+        }
+        .coin-box.gc { border-color: var(--gold-glow); color: var(--gold-glow);
+            box-shadow: inset 0 0 8px rgba(255, 215, 0, 0.2), 0 0 10px rgba(255, 215, 0, 0.1); }
+        .coin-box.sc { border-color: var(--neon-pink); color: var(--neon-pink);
+            box-shadow: inset 0 0 8px rgba(255, 0, 127, 0.2), 0 0 10px rgba(255, 0, 127, 0.1); }
+
+        /* ---------- Promo + jackpot ---------- */
+        .promo-banner {
+            background: linear-gradient(90deg, #ff0055 0%, #6e00ff 50%, #ff0055 100%);
+            background-size: 200% auto;
+            animation: gradientShift 4s linear infinite;
+            color: #fff; padding: 10px; text-align: center;
+            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px;
+            box-shadow: 0 4px 20px rgba(255, 0, 85, 0.4);
+            font-weight: 900; border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+        .promo-highlight { color: var(--gold-glow); text-shadow: 0 0 8px rgba(255, 215, 0, 0.9); }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+
+        .ticker-bar {
+            background: rgba(0, 0, 0, 0.4); padding: 8px; text-align: center;
+            font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: var(--text-dim);
+        }
+        .jackpot-val {
+            color: var(--neon-blue); font-weight: 900;
+            text-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ---------- Lobby grid ---------- */
+        .container { max-width: 1200px; margin: 25px auto; padding: 0 16px; }
+        .menu-title {
+            font-size: 1.1rem; font-weight: 800; margin-bottom: 20px;
+            color: var(--neon-blue); text-transform: uppercase; letter-spacing: 1.5px;
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+        }
+        .lobby-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        @media (min-width: 768px) { .lobby-grid { grid-template-columns: repeat(4, 1fr); } }
+
+        /* Game cards are real <button>s now: keyboard-focusable + screen-reader friendly */
+        .game-wrapper {
+            appearance: none; -webkit-appearance: none;
+            font: inherit; color: inherit;
+            background: linear-gradient(135deg, #0d122e 0%, #060817 100%);
+            border-radius: 16px; overflow: hidden;
+            border: 1px solid var(--card-border);
+            position: relative;
+            transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.25s ease;
+            cursor: pointer; aspect-ratio: 4 / 5;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; padding: 0; text-align: center;
+        }
+        .game-wrapper::before {
+            content: ''; position: absolute; inset: 0;
+            border-radius: 16px; box-shadow: inset 0 0 0 2px transparent;
+            transition: box-shadow 0.25s ease; pointer-events: none; z-index: 5;
+        }
+        .game-wrapper:hover, .game-wrapper:focus-visible {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0, 240, 255, 0.15);
+            outline: none;
+        }
+        .game-wrapper:hover::before, .game-wrapper:focus-visible::before { box-shadow: inset 0 0 0 2px var(--neon-blue); }
+        .game-wrapper.featured:hover::before, .game-wrapper.featured:focus-visible::before { box-shadow: inset 0 0 0 2px var(--gold-glow); }
+
+        /* Single reusable banner class — artwork comes from inline style or per-card modifier */
+        .game-banner {
+            width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            position: relative; display: flex; align-items: center; justify-content: center;
+        }
+        .game-banner::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 50%);
+            pointer-events: none;
+        }
+        .game-art-shade {
+            position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(6,8,23,0.95));
+        }
+
+        .game-info { position: absolute; bottom: 0; width: 100%; padding: 15px 10px; text-align: center; z-index: 4; }
+        .game-tag { font-size: 0.6rem; text-transform: uppercase; color: var(--neon-blue); letter-spacing: 2px; margin-bottom: 4px; font-weight: 800; }
+        .game-wrapper.featured .game-tag { color: var(--gold-glow); }
+        .game-name { font-size: 0.85rem; font-weight: 900; text-transform: uppercase; color: #ffffff; letter-spacing: 0.5px; }
+
+        /* ---------- Bottom dock ---------- */
+        .footer-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(180deg, rgba(13, 17, 43, 0.95) 0%, rgba(4, 6, 18, 0.98) 100%);
+            backdrop-filter: blur(12px);
+            display: flex; justify-content: space-around; align-items: center; padding: 14px 0;
+            border-top: 1px solid rgba(255,255,255,0.05); z-index: 100;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.6);
+        }
+        .footer-btn {
+            background: none; border: none; color: var(--text-dim);
+            font: inherit; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+            cursor: pointer; letter-spacing: 1px; transition: color 0.2s;
+        }
+        .footer-btn.active, .footer-btn:hover { color: #ffffff; }
+        .action-buy {
+            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+            color: #000; padding: 10px 28px; border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
+            font: inherit; font-weight: 900; font-size: 0.8rem;
+            border: none; cursor: pointer; transition: transform 0.1s;
+        }
+        .action-buy:active { transform: scale(0.96); }
+
+        /* ---------- Game modal ---------- */
+        .modal-backdrop {
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75);
+            display: none; align-items: center; justify-content: center;
+            z-index: 200; padding: 20px;
+        }
+        .modal-backdrop.open { display: flex; }
+        .modal {
+            background: linear-gradient(135deg, #0d122e 0%, #060817 100%);
+            border: 1px solid var(--neon-blue); border-radius: 16px;
+            padding: 28px; max-width: 380px; width: 100%; text-align: center;
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.25);
+        }
+        .modal h3 { color: var(--gold-glow); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .modal p { color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; margin-bottom: 20px; }
+        .modal-close {
+            background: transparent; color: var(--neon-blue);
+            border: 1.5px solid var(--neon-blue); border-radius: 30px;
+            padding: 8px 26px; font: inherit; font-size: 0.8rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+        }
+        .modal-close:hover { background: rgba(0, 240, 255, 0.1); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .promo-banner { animation: none; }
+            .game-wrapper { transition: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">HONCHO'S ENT.</div>
+        <div class="wallet" role="status" aria-label="Wallet balances">
+            <div class="coin-box gc">GC: <span id="gc-balance">Loading...</span></div>
+            <div class="coin-box sc">SC: <span id="sc-balance">Loading...</span></div>
+        </div>
+    </header>
+
+    <div class="promo-banner">
+        Player Welcome: Register now &amp; unlock your <span class="promo-highlight">$25 free play</span> balance
+    </div>
+
+    <div class="ticker-bar">Live progressive jackpot: <span class="jackpot-val" id="jackpot">$1,842,905.10</span></div>
+
+    <main class="container">
+        <h2 class="menu-title">Premium Games</h2>
+        <div class="lobby-grid" id="lobby">
+            <button class="game-wrapper featured" data-game="Wild Safari" aria-label="Play Wild Safari, featured slot">
+                <div class="game-banner" style="background-image: url('https://picsum.photos/seed/wildsafari/600/750');">
+                    <div class="game-art-shade"></div>
+                </div>
+                <div class="game-info"><div class="game-tag">Featured Slot</div><div class="game-name">Wild Safari</div></div>
+            </button>
+            <button class="game-wrapper" data-game="Volt Strike" aria-label="Play Volt Strike, slots">
+                <div class="game-banner" style="background-image: url('https://picsum.photos/seed/voltstrike/600/750');">
+                    <div class="game-art-shade"></div>
+                </div>
+                <div class="game-info"><div class="game-tag">Slots</div><div class="game-name">Volt Strike</div></div>
+            </button>
+            <button class="game-wrapper" data-game="Mystic Fortune" aria-label="Play Mystic Fortune, jackpot">
+                <div class="game-banner" style="background-image: url('https://picsum.photos/seed/mysticfortune/600/750');">
+                    <div class="game-art-shade"></div>
+                </div>
+                <div class="game-info"><div class="game-tag">Jackpot</div><div class="game-name">Mystic Fortune</div></div>
+            </button>
+            <button class="game-wrapper" data-game="Neon Rush" aria-label="Play Neon Rush, slots">
+                <div class="game-banner" style="background-image: url('https://picsum.photos/seed/neonrush/600/750');">
+                    <div class="game-art-shade"></div>
+                </div>
+                <div class="game-info"><div class="game-tag">Slots</div><div class="game-name">Neon Rush</div></div>
+            </button>
+        </div>
+    </main>
+
+    <nav class="footer-bar" aria-label="Primary">
+        <button class="footer-btn active" type="button">Lobby</button>
+        <button class="footer-btn" type="button">Promos</button>
+        <button class="action-buy" type="button" id="buy-btn">Buy Coins</button>
+        <button class="footer-btn" type="button">Rewards</button>
+        <button class="footer-btn" type="button">Account</button>
+    </nav>
+
+    <!-- Game launch modal -->
+    <div class="modal-backdrop" id="game-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal">
+            <h3 id="modal-title">Wild Safari</h3>
+            <p id="modal-text">The game client would load here. Connect your game provider SDK to launch the real slot.</p>
+            <button class="modal-close" type="button" id="modal-close">Close</button>
+        </div>
+    </div>
+
+    <script>
+        'use strict';
+
+        /* ---- Simulated wallet load (replace with your real API call) ---- */
+        function loadWallet() {
+            // Fake latency so the "Loading..." state is visible
+            setTimeout(function () {
+                document.getElementById('gc-balance').textContent = '1,250.00';
+                document.getElementById('sc-balance').textContent = '42.75';
+            }, 600);
+        }
+
+        /* ---- Live jackpot ticker ---- */
+        var jackpot = 1842905.10;
+        var jackpotEl = document.getElementById('jackpot');
+        function tickJackpot() {
+            jackpot += Math.random() * 3.50; // small random increments feel "live"
+            jackpotEl.textContent = '$' + jackpot.toLocaleString('en-US', {
+                minimumFractionDigits: 2, maximumFractionDigits: 2
+            });
+        }
+
+        /* ---- Game launch modal ---- */
+        var modal = document.getElementById('game-modal');
+        var modalTitle = document.getElementById('modal-title');
+        var lastFocused = null;
+
+        function openSlot(gameName) {
+            modalTitle.textContent = gameName;
+            lastFocused = document.activeElement;
+            modal.classList.add('open');
+            document.getElementById('modal-close').focus();
+        }
+        function closeModal() {
+            modal.classList.remove('open');
+            if (lastFocused) lastFocused.focus();
+        }
+
+        document.getElementById('lobby').addEventListener('click', function (e) {
+            var card = e.target.closest('.game-wrapper');
+            if (card) openSlot(card.dataset.game);
+        });
+        document.getElementById('modal-close').addEventListener('click', closeModal);
+        modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+        });
+
+        /* ---- Buy button placeholder ---- */
+        document.getElementById('buy-btn').addEventListener('click', function () {
+            openSlot('Coin Store');
+            document.getElementById('modal-title').textContent = 'Coin Store';
+        });
+
+        /* ---- Boot ---- */
+        loadWallet();
+        setInterval(tickJackpot, 2500);
+    </script>
+</body>
+</html>
