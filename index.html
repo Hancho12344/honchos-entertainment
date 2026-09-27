@@ -6,7 +6,6 @@
     <meta name="description" content="Honcho's Entertainment - Premium sweeps portal lobby">
     <title>Honcho's Entertainment | Premium Sweeps Portal</title>
 
-    <!-- Montserrat actually loads now -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap" rel="stylesheet">
@@ -53,7 +52,6 @@
             letter-spacing: 1.5px; text-transform: uppercase;
         }
 
-        /* ---------- Wallet plates ---------- */
         .wallet { display: flex; gap: 10px; }
         .coin-box {
             background: linear-gradient(135deg, #02040a 0%, #0f1322 100%);
@@ -102,7 +100,6 @@
         .lobby-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
         @media (min-width: 768px) { .lobby-grid { grid-template-columns: repeat(4, 1fr); } }
 
-        /* Game cards are real <button>s now: keyboard-focusable + screen-reader friendly */
         .game-wrapper {
             appearance: none; -webkit-appearance: none;
             font: inherit; color: inherit;
@@ -128,7 +125,6 @@
         .game-wrapper:hover::before, .game-wrapper:focus-visible::before { box-shadow: inset 0 0 0 2px var(--neon-blue); }
         .game-wrapper.featured:hover::before, .game-wrapper.featured:focus-visible::before { box-shadow: inset 0 0 0 2px var(--gold-glow); }
 
-        /* Single reusable banner class — artwork comes from inline style or per-card modifier */
         .game-banner {
             width: 100%; height: 100%;
             background-size: cover; background-position: center;
@@ -173,22 +169,170 @@
         }
         .action-buy:active { transform: scale(0.96); }
 
-        /* ---------- Game modal ---------- */
+        /* ---------- Toast ---------- */
+        .toast {
+            position: fixed; top: 76px; left: 50%; transform: translateX(-50%) translateY(-12px);
+            background: rgba(6, 8, 23, 0.97); border: 1px solid var(--gold-glow); color: #fff;
+            padding: 10px 20px; border-radius: 30px; font-size: 0.8rem; font-weight: 700;
+            opacity: 0; pointer-events: none; transition: opacity 0.25s, transform 0.25s;
+            z-index: 400; max-width: 90vw; text-align: center;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ================= GAME SCREEN ================= */
+        .game-screen {
+            position: fixed; inset: 0; z-index: 300;
+            background:
+                radial-gradient(circle at 50% 0%, #141938 0%, transparent 55%),
+                linear-gradient(180deg, #070a1c 0%, #030511 100%);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 12px 16px 20px; overflow-y: auto;
+        }
+        .game-screen[hidden] { display: none; }
+
+        .gs-top {
+            width: 100%; max-width: 560px;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .gs-title {
+            font-size: 1rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--gold-glow); text-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+            text-align: center; flex: 1;
+        }
+        .gs-icon-btn {
+            background: rgba(255,255,255,0.06); border: 1px solid var(--card-border);
+            color: #fff; width: 38px; height: 38px; border-radius: 50%;
+            font-size: 1rem; cursor: pointer; flex: none;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .gs-icon-btn:hover { border-color: var(--neon-blue); }
+
+        .fs-banner {
+            background: linear-gradient(90deg, #ff0055, #6e00ff, #ff0055);
+            background-size: 200% auto; animation: gradientShift 3s linear infinite;
+            font-weight: 900; letter-spacing: 2px; text-transform: uppercase; font-size: 0.85rem;
+            padding: 8px 22px; border-radius: 30px; margin-bottom: 10px;
+            box-shadow: 0 0 25px rgba(255, 0, 85, 0.5);
+        }
+        .fs-banner[hidden] { display: none; }
+
+        .reels {
+            width: 100%; max-width: 560px;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+            background: linear-gradient(135deg, #0d122e 0%, #060817 100%);
+            border: 1px solid var(--card-border); border-radius: 16px;
+            padding: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 40px rgba(0, 240, 255, 0.04);
+        }
+        .reel { display: flex; flex-direction: column; gap: 8px; }
+        .cell {
+            aspect-ratio: 1 / 1; border-radius: 12px;
+            background: linear-gradient(135deg, #131a3d 0%, #080b1e 100%);
+            border: 1px solid rgba(255,255,255,0.07);
+            display: flex; align-items: center; justify-content: center;
+            font-size: clamp(1.4rem, 7vw, 2.2rem); font-weight: 900;
+            transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+            user-select: none;
+        }
+        .reel.spinning .cell { filter: blur(2px); animation: reelShake 0.12s linear infinite; }
+        @keyframes reelShake { 0% { transform: translateY(-3px); } 100% { transform: translateY(3px); } }
+        .reel.land .cell { animation: landBounce 0.25s ease; }
+        @keyframes landBounce { 0% { transform: scale(1.08); } 100% { transform: scale(1); } }
+        .cell.win {
+            border-color: var(--gold-glow);
+            box-shadow: 0 0 18px rgba(255, 215, 0, 0.55), inset 0 0 12px rgba(255, 215, 0, 0.25);
+            animation: winPulse 0.6s ease-in-out infinite alternate;
+        }
+        @keyframes winPulse { from { transform: scale(1); } to { transform: scale(1.07); } }
+        .cell.scatter-glow {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 18px rgba(255, 0, 127, 0.55);
+        }
+
+        .win-display {
+            min-height: 2.2rem; margin: 10px 0 2px;
+            font-size: 1.3rem; font-weight: 900; letter-spacing: 1px;
+            color: var(--gold-glow); text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .gs-stats {
+            width: 100%; max-width: 560px;
+            display: flex; justify-content: space-between; gap: 10px; margin-bottom: 12px;
+        }
+        .stat {
+            flex: 1; background: rgba(255,255,255,0.04);
+            border: 1px solid var(--card-border); border-radius: 12px;
+            padding: 8px 6px; text-align: center;
+        }
+        .stat .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 2px; }
+        .stat .value { font-size: 1rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .stat.balance .value { color: var(--gold-glow); }
+
+        .gs-controls {
+            width: 100%; max-width: 560px;
+            display: flex; align-items: center; justify-content: center; gap: 14px;
+        }
+        .bet-ctrl {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.04); border: 1px solid var(--card-border);
+            border-radius: 30px; padding: 6px 10px;
+        }
+        .bet-btn {
+            background: none; border: 1px solid var(--neon-blue); color: var(--neon-blue);
+            width: 30px; height: 30px; border-radius: 50%; font-size: 1.1rem; font-weight: 900;
+            cursor: pointer; line-height: 1;
+        }
+        .bet-btn:active { transform: scale(0.92); }
+        .bet-val { font-weight: 800; min-width: 64px; text-align: center; font-variant-numeric: tabular-nums; }
+        .spin-btn {
+            width: 92px; height: 92px; border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #ffe97a 0%, #ffd700 40%, #c99400 100%);
+            border: 3px solid rgba(255,255,255,0.35);
+            color: #3a2b00; font: inherit; font-weight: 900; font-size: 0.95rem;
+            text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+            box-shadow: 0 6px 25px rgba(255, 215, 0, 0.45), inset 0 -4px 10px rgba(0,0,0,0.25);
+            transition: transform 0.1s;
+        }
+        .spin-btn:active:not(:disabled) { transform: scale(0.94); }
+        .spin-btn:disabled { filter: grayscale(0.7) brightness(0.7); cursor: default; }
+
+        .gs-links { margin-top: 12px; display: flex; gap: 18px; }
+        .gs-link {
+            background: none; border: none; color: var(--text-dim);
+            font: inherit; font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.5px; cursor: pointer; text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+        .gs-link:hover { color: #fff; }
+
+        /* ---------- Paytable modal ---------- */
         .modal-backdrop {
-            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75);
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.78);
             display: none; align-items: center; justify-content: center;
-            z-index: 200; padding: 20px;
+            z-index: 350; padding: 20px;
         }
         .modal-backdrop.open { display: flex; }
         .modal {
             background: linear-gradient(135deg, #0d122e 0%, #060817 100%);
             border: 1px solid var(--neon-blue); border-radius: 16px;
-            padding: 28px; max-width: 380px; width: 100%; text-align: center;
+            padding: 24px; max-width: 420px; width: 100%; max-height: 84vh; overflow-y: auto;
             box-shadow: 0 0 40px rgba(0, 240, 255, 0.25);
         }
-        .modal h3 { color: var(--gold-glow); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
-        .modal p { color: var(--text-dim); font-size: 0.85rem; line-height: 1.5; margin-bottom: 20px; }
+        .modal h3 { color: var(--gold-glow); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; text-align: center; }
+        .pay-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 7px 4px; border-bottom: 1px solid rgba(255,255,255,0.06);
+            font-size: 0.82rem;
+        }
+        .pay-sym { font-weight: 900; font-size: 1.1rem; }
+        .pay-vals { color: var(--text-dim); font-variant-numeric: tabular-nums; }
+        .pay-note { font-size: 0.75rem; color: var(--text-dim); line-height: 1.6; margin-top: 12px; }
+        .pay-note b { color: #fff; }
         .modal-close {
+            display: block; margin: 18px auto 0;
             background: transparent; color: var(--neon-blue);
             border: 1.5px solid var(--neon-blue); border-radius: 30px;
             padding: 8px 26px; font: inherit; font-size: 0.8rem; font-weight: 800;
@@ -197,8 +341,9 @@
         .modal-close:hover { background: rgba(0, 240, 255, 0.1); }
 
         @media (prefers-reduced-motion: reduce) {
-            .promo-banner { animation: none; }
-            .game-wrapper { transition: none; }
+            .promo-banner, .fs-banner { animation: none; }
+            .game-wrapper, .cell { transition: none; }
+            .reel.spinning .cell { animation: none; }
         }
     </style>
 </head>
@@ -256,72 +401,395 @@
         <button class="footer-btn" type="button">Account</button>
     </nav>
 
-    <!-- Game launch modal -->
-    <div class="modal-backdrop" id="game-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="toast" id="toast" role="status"></div>
+
+    <!-- ================= PLAYABLE SLOT ================= -->
+    <section class="game-screen" id="game-screen" hidden aria-label="Slot game">
+        <div class="gs-top">
+            <button class="gs-icon-btn" id="gs-close" type="button" aria-label="Back to lobby">&#8592;</button>
+            <div class="gs-title" id="gs-title">Wild Safari</div>
+            <button class="gs-icon-btn" id="gs-sound" type="button" aria-label="Toggle sound">&#9836;</button>
+        </div>
+
+        <div class="fs-banner" id="fs-banner" hidden>Free Spins &middot; <span id="fs-left">10</span> left &middot; 2x wins</div>
+
+        <div class="reels" id="reels" role="img" aria-label="Slot reels"></div>
+
+        <div class="win-display" id="win-display"></div>
+
+        <div class="gs-stats">
+            <div class="stat balance"><div class="label">Balance (GC)</div><div class="value" id="gs-balance">$0.00</div></div>
+            <div class="stat"><div class="label">Bet</div><div class="value" id="gs-betview">$1.00</div></div>
+            <div class="stat"><div class="label">Last Win</div><div class="value" id="gs-lastwin">$0.00</div></div>
+        </div>
+
+        <div class="gs-controls">
+            <div class="bet-ctrl" aria-label="Bet controls">
+                <button class="bet-btn" id="bet-down" type="button" aria-label="Decrease bet">&minus;</button>
+                <div class="bet-val" id="bet-val">$1.00</div>
+                <button class="bet-btn" id="bet-up" type="button" aria-label="Increase bet">+</button>
+            </div>
+            <button class="spin-btn" id="spin-btn" type="button">Spin</button>
+        </div>
+
+        <div class="gs-links">
+            <button class="gs-link" id="paytable-btn" type="button">Paytable</button>
+        </div>
+    </section>
+
+    <!-- Paytable modal -->
+    <div class="modal-backdrop" id="paytable-modal" role="dialog" aria-modal="true" aria-labelledby="pt-title">
         <div class="modal">
-            <h3 id="modal-title">Wild Safari</h3>
-            <p id="modal-text">The game client would load here. Connect your game provider SDK to launch the real slot.</p>
-            <button class="modal-close" type="button" id="modal-close">Close</button>
+            <h3 id="pt-title">Paytable</h3>
+            <div id="paytable-rows"></div>
+            <p class="pay-note">
+                <b>W</b> is Wild and substitutes for every symbol except Scatter.<br>
+                <b>S</b> is Scatter — pays anywhere on the reels.<br>
+                <b>3+ Scatters</b> award Free Spins (3&thinsp;=&thinsp;10, 4&thinsp;=&thinsp;15, 5&thinsp;=&thinsp;20) with all wins <b>doubled</b>. Scatters can retrigger.<br>
+                Line wins pay left to right on 10 lines. Pays shown are multipliers of your line bet.
+            </p>
+            <button class="modal-close" type="button" id="paytable-close">Close</button>
         </div>
     </div>
 
     <script>
         'use strict';
 
-        /* ---- Simulated wallet load (replace with your real API call) ---- */
-        function loadWallet() {
-            // Fake latency so the "Loading..." state is visible
-            setTimeout(function () {
-                document.getElementById('gc-balance').textContent = '1,250.00';
-                document.getElementById('sc-balance').textContent = '42.75';
-            }, 600);
+        /* ================= Helpers ================= */
+        function $(id) { return document.getElementById(id); }
+        function fmt(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+        function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+        var toastTimer = null;
+        function toast(msg) {
+            var el = $('toast');
+            el.textContent = msg;
+            el.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(function () { el.classList.remove('show'); }, 2600);
         }
 
-        /* ---- Live jackpot ticker ---- */
+        /* ================= Tiny sound engine (WebAudio, no assets) ================= */
+        var audioCtx = null, muted = false;
+        function tone(freq, delay, dur, type, vol) {
+            if (muted) return;
+            try {
+                audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+                var t = audioCtx.currentTime + delay;
+                var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+                o.type = type || 'sine'; o.frequency.value = freq;
+                g.gain.setValueAtTime(vol || 0.05, t);
+                g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                o.connect(g); g.connect(audioCtx.destination);
+                o.start(t); o.stop(t + dur);
+            } catch (e) { /* audio unavailable — stay silent */ }
+        }
+        function sndClick() { tone(650, 0, 0.06, 'square', 0.025); }
+        function sndSpin() { tone(220, 0, 0.12, 'sawtooth', 0.03); tone(330, 0.08, 0.12, 'sawtooth', 0.03); }
+        function sndWin(big) {
+            var seq = big ? [523, 659, 784, 1046, 1318] : [523, 659, 784];
+            seq.forEach(function (f, i) { tone(f, i * 0.09, 0.16, 'triangle', 0.06); });
+        }
+        function sndScatter() { [880, 1174, 1568].forEach(function (f, i) { tone(f, i * 0.12, 0.2, 'sine', 0.06); }); }
+
+        /* ================= Wallet (demo credits, persisted) ================= */
+        var gc = parseFloat(localStorage.getItem('honcho_gc'));
+        if (isNaN(gc)) { gc = 1250.00; }
+        var sc = 42.75;
+        function saveGC() { try { localStorage.setItem('honcho_gc', gc.toFixed(2)); } catch (e) {} }
+        function updateWallet() {
+            $('gc-balance').textContent = gc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            $('sc-balance').textContent = sc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            $('gs-balance').textContent = fmt(gc);
+        }
+
+        /* ================= Jackpot ticker ================= */
         var jackpot = 1842905.10;
-        var jackpotEl = document.getElementById('jackpot');
-        function tickJackpot() {
-            jackpot += Math.random() * 3.50; // small random increments feel "live"
-            jackpotEl.textContent = '$' + jackpot.toLocaleString('en-US', {
-                minimumFractionDigits: 2, maximumFractionDigits: 2
+        setInterval(function () {
+            jackpot += Math.random() * 3.50;
+            $('jackpot').textContent = '$' + jackpot.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }, 2500);
+
+        /* ================= Slot engine ================= */
+        var SYMBOLS = [
+            { id: 'seven',   glyph: '7',   color: '#ffd700', weight: 2, pay: { 3: 25,  4: 100, 5: 500 } },
+            { id: 'wild',    glyph: 'W',   color: '#ffffff', weight: 1, pay: { 3: 50,  4: 200, 5: 1000 }, wild: true },
+            { id: 'bar',     glyph: 'BAR', color: '#ff9f1a', weight: 3, pay: { 3: 15,  4: 50,  5: 200 } },
+            { id: 'diamond', glyph: '\u25C6', color: '#00f0ff', weight: 4, pay: { 3: 10, 4: 30, 5: 120 } },
+            { id: 'star',    glyph: '\u2605', color: '#ff007f', weight: 5, pay: { 3: 8,  4: 20,  5: 80 } },
+            { id: 'spade',   glyph: '\u2660', color: '#b366ff', weight: 6, pay: { 3: 5,  4: 12,  5: 50 } },
+            { id: 'heart',   glyph: '\u2665', color: '#ff4d6d', weight: 6, pay: { 3: 4,  4: 10,  5: 40 } },
+            { id: 'club',    glyph: '\u2663', color: '#4dff88', weight: 7, pay: { 3: 3,  4: 8,   5: 30 } },
+            { id: 'scatter', glyph: 'S',   color: '#ff007f', weight: 2, scatter: true }
+        ];
+        var BAG = [];
+        SYMBOLS.forEach(function (s) { for (var i = 0; i < s.weight; i++) BAG.push(s); });
+        function rndSym() { return BAG[Math.floor(Math.random() * BAG.length)]; }
+
+        var LINES = [
+            [1,1,1,1,1], [0,0,0,0,0], [2,2,2,2,2],
+            [0,1,2,1,0], [2,1,0,1,2],
+            [1,0,0,0,1], [1,2,2,2,1],
+            [0,0,1,0,0], [2,2,1,2,2],
+            [1,2,1,0,1]
+        ];
+        var SCATTER_PAY = { 3: 5, 4: 20, 5: 100 };
+        var SCATTER_FS  = { 3: 10, 4: 15, 5: 20 };
+        var BETS = [1, 2, 5, 10, 25, 50, 100];
+
+        var betIdx = 0, bet = BETS[0];
+        var spinning = false, gameOpen = false, inFS = false, freeSpins = 0;
+        var reelsEl = $('reels'), reelCols = [];
+
+        (function buildReels() {
+            for (var r = 0; r < 5; r++) {
+                var col = document.createElement('div');
+                col.className = 'reel';
+                var cells = [];
+                for (var c = 0; c < 3; c++) {
+                    var cell = document.createElement('div');
+                    cell.className = 'cell';
+                    col.appendChild(cell); cells.push(cell);
+                }
+                reelsEl.appendChild(col);
+                reelCols.push({ col: col, cells: cells });
+            }
+            // idle display
+            for (var k = 0; k < 5; k++) setReel(k, [rndSym(), rndSym(), rndSym()]);
+        })();
+
+        function paintCell(cell, sym) {
+            cell.textContent = sym.glyph;
+            cell.style.color = sym.color;
+            cell.style.textShadow = '0 0 12px ' + sym.color + '66';
+            cell.dataset.sym = sym.id;
+            if (sym.id === 'wild') { cell.style.borderColor = '#ffffff'; }
+            else if (sym.id === 'scatter') { cell.style.borderColor = '#ff007f'; }
+            else { cell.style.borderColor = ''; }
+        }
+        function setReel(r, syms) {
+            for (var i = 0; i < 3; i++) paintCell(reelCols[r].cells[i], syms[i]);
+        }
+        function randomizeReel(r) {
+            for (var i = 0; i < 3; i++) paintCell(reelCols[r].cells[i], rndSym());
+        }
+        function clearWinMarks() {
+            reelCols.forEach(function (rc) {
+                rc.cells.forEach(function (cell) { cell.classList.remove('win', 'scatter-glow'); });
             });
         }
 
-        /* ---- Game launch modal ---- */
-        var modal = document.getElementById('game-modal');
-        var modalTitle = document.getElementById('modal-title');
-        var lastFocused = null;
-
-        function openSlot(gameName) {
-            modalTitle.textContent = gameName;
-            lastFocused = document.activeElement;
-            modal.classList.add('open');
-            document.getElementById('modal-close').focus();
+        function evalLine(grid, line) {
+            var cells = [], r;
+            for (r = 0; r < 5; r++) cells.push(grid[r][line[r]]);
+            var target = null;
+            for (r = 0; r < 5; r++) {
+                if (!cells[r].wild && !cells[r].scatter) { target = cells[r]; break; }
+            }
+            if (!target) target = SYMBOLS[1]; // all wilds -> pay as wild
+            var count = 0;
+            for (r = 0; r < 5; r++) {
+                if (cells[r].id === target.id || cells[r].wild) count++;
+                else break;
+            }
+            if (count >= 3) return { symbol: target, count: count, mult: target.pay[count] };
+            return null;
         }
-        function closeModal() {
-            modal.classList.remove('open');
+
+        function setBet(i) {
+            betIdx = Math.max(0, Math.min(BETS.length - 1, i));
+            bet = BETS[betIdx];
+            var t = fmt(bet);
+            $('bet-val').textContent = t;
+            $('gs-betview').textContent = t;
+            sndClick();
+        }
+        $('bet-down').addEventListener('click', function () { if (!spinning) setBet(betIdx - 1); });
+        $('bet-up').addEventListener('click', function () { if (!spinning) setBet(betIdx + 1); });
+
+        async function doSpin() {
+            if (spinning) return;
+            var isFree = freeSpins > 0;
+            if (!isFree) {
+                if (gc < bet) { toast('Not enough GC \u2014 tap Buy Coins for free demo credits'); return; }
+                gc = Math.round((gc - bet) * 100) / 100;
+            }
+            spinning = true;
+            $('spin-btn').disabled = true;
+            clearWinMarks();
+            $('win-display').textContent = '';
+            updateWallet();
+            sndSpin();
+
+            var grid = [], r;
+            for (r = 0; r < 5; r++) grid[r] = [rndSym(), rndSym(), rndSym()];
+
+            var stops = [];
+            for (r = 0; r < 5; r++) {
+                (function (reel) {
+                    var rc = reelCols[reel];
+                    rc.col.classList.add('spinning');
+                    var iv = setInterval(function () { randomizeReel(reel); }, 70);
+                    stops.push(new Promise(function (res) {
+                        setTimeout(function () {
+                            clearInterval(iv);
+                            setReel(reel, grid[reel]);
+                            rc.col.classList.remove('spinning');
+                            rc.col.classList.add('land');
+                            setTimeout(function () { rc.col.classList.remove('land'); }, 260);
+                            sndClick();
+                            res();
+                        }, 550 + reel * 380);
+                    }));
+                })(r);
+            }
+            await Promise.all(stops);
+
+            // ---- evaluate ----
+            var mult = isFree ? 2 : 1;
+            var lineBet = bet / LINES.length;
+            var totalWin = 0, winCells = {};
+            LINES.forEach(function (line) {
+                var res = evalLine(grid, line);
+                if (res) {
+                    totalWin += res.mult * lineBet * mult;
+                    for (var i = 0; i < res.count; i++) winCells[i + '-' + line[i]] = true;
+                }
+            });
+
+            var scatters = [];
+            for (var a = 0; a < 5; a++) for (var b = 0; b < 3; b++) {
+                if (grid[a][b].scatter) scatters.push(a + '-' + b);
+            }
+            var fsAwarded = 0;
+            if (scatters.length >= 3) {
+                var n = Math.min(scatters.length, 5);
+                totalWin += SCATTER_PAY[n] * bet * mult;
+                fsAwarded = SCATTER_FS[n];
+                scatters.forEach(function (k) { winCells[k] = 'scatter'; });
+                sndScatter();
+            }
+
+            totalWin = Math.round(totalWin * 100) / 100;
+
+            if (totalWin > 0) {
+                gc = Math.round((gc + totalWin) * 100) / 100;
+                Object.keys(winCells).forEach(function (k) {
+                    var parts = k.split('-');
+                    var cell = reelCols[+parts[0]].cells[+parts[1]];
+                    cell.classList.add(winCells[k] === 'scatter' ? 'scatter-glow' : 'win');
+                });
+                $('win-display').textContent = 'WIN ' + fmt(totalWin);
+                $('gs-lastwin').textContent = fmt(totalWin);
+                sndWin(totalWin >= bet * 10);
+                updateWallet();
+                await sleep(1400);
+                clearWinMarks();
+            }
+
+            if (fsAwarded > 0 && gameOpen) {
+                freeSpins += fsAwarded;
+                toast(fsAwarded + ' FREE SPINS \u2014 all wins doubled');
+                if (!inFS) runFreeSpins();
+            }
+
+            spinning = false;
+            if (!inFS) $('spin-btn').disabled = false;
+            saveGC();
+        }
+
+        async function runFreeSpins() {
+            inFS = true;
+            $('spin-btn').disabled = true;
+            $('fs-banner').hidden = false;
+            while (freeSpins > 0 && gameOpen) {
+                $('fs-left').textContent = freeSpins;
+                $('spin-btn').textContent = 'FREE';
+                await sleep(1100);
+                if (!gameOpen) break;
+                freeSpins--;
+                await doSpin();
+            }
+            inFS = false;
+            freeSpins = 0;
+            $('fs-banner').hidden = true;
+            $('spin-btn').textContent = 'SPIN';
+            if (gameOpen) $('spin-btn').disabled = false;
+        }
+
+        $('spin-btn').addEventListener('click', function () {
+            if (!inFS) doSpin();
+        });
+
+        /* ================= Game open / close ================= */
+        var lastFocused = null;
+        function launchGame(name) {
+            gameOpen = true;
+            lastFocused = document.activeElement;
+            $('gs-title').textContent = name;
+            $('game-screen').hidden = false;
+            document.body.style.overflow = 'hidden';
+            updateWallet();
+            $('gs-close').focus();
+        }
+        function closeGame() {
+            gameOpen = false;
+            $('game-screen').hidden = true;
+            document.body.style.overflow = '';
             if (lastFocused) lastFocused.focus();
         }
-
-        document.getElementById('lobby').addEventListener('click', function (e) {
-            var card = e.target.closest('.game-wrapper');
-            if (card) openSlot(card.dataset.game);
-        });
-        document.getElementById('modal-close').addEventListener('click', closeModal);
-        modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+        $('gs-close').addEventListener('click', closeGame);
         document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+            if (e.key === 'Escape' && gameOpen && $('paytable-modal').classList.contains('open')) {
+                $('paytable-modal').classList.remove('open');
+            } else if (e.key === 'Escape' && gameOpen) {
+                closeGame();
+            }
         });
 
-        /* ---- Buy button placeholder ---- */
-        document.getElementById('buy-btn').addEventListener('click', function () {
-            openSlot('Coin Store');
-            document.getElementById('modal-title').textContent = 'Coin Store';
+        $('lobby').addEventListener('click', function (e) {
+            var card = e.target.closest('.game-wrapper');
+            if (card) launchGame(card.dataset.game);
         });
 
-        /* ---- Boot ---- */
-        loadWallet();
-        setInterval(tickJackpot, 2500);
+        /* ================= Sound toggle ================= */
+        $('gs-sound').addEventListener('click', function () {
+            muted = !muted;
+            $('gs-sound').style.opacity = muted ? '0.4' : '1';
+            toast(muted ? 'Sound off' : 'Sound on');
+        });
+
+        /* ================= Paytable ================= */
+        (function buildPaytable() {
+            var html = '';
+            SYMBOLS.forEach(function (s) {
+                if (s.scatter) {
+                    html += '<div class="pay-row"><span class="pay-sym" style="color:' + s.color + '">S</span>' +
+                        '<span class="pay-vals">3&thinsp;=&thinsp;5x &middot; 4&thinsp;=&thinsp;20x &middot; 5&thinsp;=&thinsp;100x bet</span></div>';
+                } else {
+                    html += '<div class="pay-row"><span class="pay-sym" style="color:' + s.color + '">' + s.glyph + '</span>' +
+                        '<span class="pay-vals">3&thinsp;=&thinsp;' + s.pay[3] + ' &middot; 4&thinsp;=&thinsp;' + s.pay[4] + ' &middot; 5&thinsp;=&thinsp;' + s.pay[5] + '</span></div>';
+                }
+            });
+            $('paytable-rows').innerHTML = html;
+        })();
+        $('paytable-btn').addEventListener('click', function () { $('paytable-modal').classList.add('open'); });
+        $('paytable-close').addEventListener('click', function () { $('paytable-modal').classList.remove('open'); });
+        $('paytable-modal').addEventListener('click', function (e) {
+            if (e.target === $('paytable-modal')) $('paytable-modal').classList.remove('open');
+        });
+
+        /* ================= Buy coins (demo credits) ================= */
+        $('buy-btn').addEventListener('click', function () {
+            gc = Math.round((gc + 1000) * 100) / 100;
+            saveGC(); updateWallet();
+            sndWin(false);
+            toast('+1,000 demo GC added \u2014 have fun');
+        });
+
+        /* ================= Boot ================= */
+        updateWallet();
+        setBet(0);
     </script>
 </body>
 </html>
