@@ -8,7 +8,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Montserrat:wght@400;700;800;900&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -523,6 +523,187 @@
             .game-wrapper .shine { display: none; }
             .reels { transform: none; }
         }
+        /* ================= Scratch & Win ================= */
+        .sc-table { padding: 16px 14px 6px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .sc-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: min(92vw, 430px); }
+        .sc-cell { position: relative; aspect-ratio: 1; border-radius: 16px; overflow: hidden; background: radial-gradient(circle at 50% 35%, #241845, #120b26); box-shadow: inset 0 0 0 2px rgba(255, 215, 0, .28), 0 6px 14px rgba(0, 0, 0, .55); touch-action: none; }
+        .sc-prize { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 46px; }
+        .sc-prize img { width: 80%; height: 80%; object-fit: contain; border-radius: 12px; }
+        .sc-cover { position: absolute; inset: 0; width: 100%; height: 100%; cursor: pointer; border-radius: 16px; transition: opacity .45s ease; }
+        .sc-cover.gone { opacity: 0; pointer-events: none; }
+        .sc-cell.won { box-shadow: inset 0 0 0 3px #ffd700, 0 0 22px rgba(255, 215, 0, .85); animation: scPulse 1s ease-in-out infinite; }
+        @keyframes scPulse { 50% { box-shadow: inset 0 0 0 3px #ffd700, 0 0 34px rgba(255, 215, 0, 1); } }
+        .sc-msg { color: #ffe9a8; font-size: 14px; text-align: center; min-height: 22px; max-width: 430px; }
+        .sc-payhint { color: #c9b8ff; font-size: 12px; }
+
+        /* Welcome bonus */
+        .welcome-modal { text-align: center; }
+        .welcome-kicker { color: var(--gold-glow); letter-spacing: 2px; font-size: 12px; text-transform: uppercase; }
+        .welcome-modal h3 { font-size: 28px; margin: 6px 0; }
+        .welcome-amount { font-size: 54px; font-weight: 900; color: #ffd700; text-shadow: 0 0 24px rgba(255, 215, 0, .8); margin: 8px 0 4px; }
+        .welcome-claim { font-size: 17px; padding: 13px 26px; }
+
+        /* Currency toggle */
+        .cur-toggle { background: linear-gradient(180deg, #ffe27a, #d4a017); border: none; border-radius: 999px; font-weight: 900; color: #3a2500; padding: 10px 18px; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 215, 0, .35); align-self: center; }
+        .cur-toggle:active { transform: scale(.96); }
+
+        /* Store */
+        .store-modal { text-align: center; max-width: 440px; }
+        .pkg-list { display: flex; flex-direction: column; gap: 12px; margin: 12px 0; }
+        .pkg { position: relative; border: 1px solid rgba(255, 255, 255, .14); border-radius: 16px; padding: 14px 12px 12px; background: rgba(255, 255, 255, .04); }
+        .pkg.popular { border-color: var(--gold-glow); box-shadow: 0 0 22px rgba(255, 215, 0, .35); background: rgba(255, 215, 0, .06); }
+        .pkg-badge { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: linear-gradient(180deg, #ffe27a, #d4a017); color: #3a2500; font-size: 11px; font-weight: 900; letter-spacing: 1px; padding: 3px 12px; border-radius: 999px; white-space: nowrap; }
+        .pkg-gc { font-size: 24px; font-weight: 900; color: #ffe27a; }
+        .pkg-gc span, .pkg-sc span { font-size: 13px; font-weight: 400; color: var(--text-dim); }
+        .pkg-sc { font-size: 17px; font-weight: 800; color: #7CFC00; margin: 2px 0 10px; }
+        .pkg-buy { background: linear-gradient(180deg, #ffe27a, #d4a017); border: none; border-radius: 12px; font-weight: 900; font-size: 17px; color: #3a2500; padding: 11px 34px; cursor: pointer; box-shadow: 0 4px 14px rgba(255, 215, 0, .4); }
+        .pkg-buy:active { transform: scale(.97); }
+        .co-summary { background: rgba(255, 255, 255, .05); border-radius: 12px; padding: 14px; margin: 10px 0; font-size: 16px; line-height: 1.7; }
+        .co-pay { font-size: 17px; padding: 13px 30px; margin-bottom: 8px; }
+
+        /* ============ SOCIAL-CASINO GLOSS (LuckyLand / Chumba style) ============ */
+        /* Brighter, candy-colored lobby: saturated violet-magenta-teal night */
+        body {
+            background-image:
+                radial-gradient(circle at 50% -12%, #7a24c9 0%, transparent 52%),
+                radial-gradient(circle at 108% 108%, #c2147f 0%, transparent 46%),
+                radial-gradient(circle at -8% 108%, #0e7fa8 0%, transparent 46%),
+                linear-gradient(180deg, #31135f 0%, #1a0b3d 55%, #120826 100%);
+        }
+
+        /* Playful rounded display type for headers, logo and game names */
+        .logo, .menu-title, .game-name, .gs-title, .bw-title, .pkg-gc, .welcome-amount {
+            font-family: 'Baloo 2', 'Montserrat', 'Arial Black', sans-serif;
+        }
+        .logo {
+            font-size: 1.45rem; letter-spacing: 1px;
+            background: linear-gradient(180deg, #fff6c8 0%, #ffd700 45%, #ff9d00 100%);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            filter: drop-shadow(0 2px 0 rgba(90, 50, 0, 0.9)) drop-shadow(0 0 14px rgba(255, 200, 0, 0.55));
+            text-shadow: none;
+        }
+        .menu-title { font-size: 1.6rem; letter-spacing: 1px; }
+        .menu-title .accent {
+            background: linear-gradient(180deg, #fff6c8 0%, #ffd700 50%, #ff9d00 100%);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+
+        /* Per-game accent palettes: glossy gradient borders + matching glow */
+        .acc-gold   { --acc1: #fff3b0; --acc2: #ff9d00; --accglow: rgba(255, 180, 0, 0.40); }
+        .acc-teal   { --acc1: #8ff7ff; --acc2: #0090ff; --accglow: rgba(0, 200, 255, 0.38); }
+        .acc-pink   { --acc1: #ff9ed2; --acc2: #ff2d95; --accglow: rgba(255, 45, 149, 0.40); }
+        .acc-purple { --acc1: #d3a6ff; --acc2: #7a1fff; --accglow: rgba(140, 60, 255, 0.42); }
+        .acc-green  { --acc1: #c2ff9e; --acc2: #00c853; --accglow: rgba(0, 220, 90, 0.38); }
+        .acc-orange { --acc1: #ffd29e; --acc2: #ff6a00; --accglow: rgba(255, 120, 0, 0.40); }
+        .acc-red    { --acc1: #ffb3b3; --acc2: #ff2d55; --accglow: rgba(255, 45, 85, 0.40); }
+        .acc-blue   { --acc1: #a9ccff; --acc2: #2d5bff; --accglow: rgba(70, 110, 255, 0.42); }
+
+        .game-wrapper {
+            border: 3px solid transparent;
+            border-radius: 26px;
+            background:
+                linear-gradient(165deg, #2c1654 0%, #150a2e 100%) padding-box,
+                linear-gradient(165deg, var(--acc1, #ffd700), var(--acc2, #ff9d00)) border-box;
+            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.55), 0 0 26px var(--accglow, rgba(255, 180, 0, 0.35));
+        }
+        .game-wrapper:hover, .game-wrapper:focus-visible {
+            transform: translateY(-8px) scale(1.04);
+            box-shadow: 0 22px 46px rgba(0, 0, 0, 0.6), 0 0 46px var(--accglow, rgba(255, 180, 0, 0.5));
+        }
+        .game-wrapper:hover::before, .game-wrapper:focus-visible::before {
+            box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.55);
+            border-radius: 23px;
+        }
+        .game-wrapper.featured { border-color: transparent; }
+        .game-wrapper::before { border-radius: 23px; }
+
+        /* Candy gloss wash over the art */
+        .game-banner::after {
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.30) 0%, rgba(255, 255, 255, 0.0) 30%),
+                linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 45%);
+        }
+        .game-art-shade {
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.0) 34%, rgba(12, 4, 30, 0.55) 68%, rgba(12, 4, 30, 0.96));
+        }
+
+        /* Ribbon badges: HOT / NEW */
+        .card-badge {
+            position: absolute; top: 12px; left: -8px; z-index: 6;
+            font-family: 'Baloo 2', 'Montserrat', sans-serif;
+            font-size: 0.68rem; font-weight: 800; letter-spacing: 1.5px;
+            color: #fff; padding: 6px 14px 6px 16px;
+            background: linear-gradient(180deg, #ff6e8a 0%, #e0004f 100%);
+            border-radius: 0 14px 14px 0;
+            box-shadow: 0 5px 14px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.5);
+            transform: rotate(-5deg);
+        }
+        .card-badge::before {
+            content: ''; position: absolute; left: 0; bottom: -7px;
+            border: 4px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.45); border-right-color: rgba(0, 0, 0, 0.45);
+        }
+        .card-badge.gold {
+            background: linear-gradient(180deg, #ffe97a 0%, #e09b00 100%);
+            color: #4a2c00;
+        }
+
+        /* Live jackpot pill pinned on jackpot cards */
+        .card-jackpot {
+            position: absolute; top: 10px; right: 10px; z-index: 6;
+            font-size: 0.66rem; font-weight: 900; letter-spacing: 0.5px;
+            color: #3a2400; padding: 5px 11px; border-radius: 999px;
+            background: linear-gradient(180deg, #fff6c8 0%, #ffd700 55%, #ff9d00 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 14px rgba(255, 200, 0, 0.65), inset 0 1px 2px rgba(255, 255, 255, 0.7);
+            font-variant-numeric: tabular-nums; white-space: nowrap;
+        }
+
+        .game-tag {
+            font-size: 0.62rem; letter-spacing: 2.5px;
+            color: var(--acc1, var(--neon-pink));
+            text-shadow: 0 0 10px var(--accglow, rgba(255, 45, 149, 0.5));
+        }
+        .game-name {
+            font-size: 1.06rem; letter-spacing: 0.5px;
+            text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6), 0 0 20px var(--accglow, rgba(255, 180, 0, 0.4));
+        }
+        .game-info { padding: 16px 10px 14px; }
+
+        .play-pill {
+            font-family: 'Baloo 2', 'Montserrat', sans-serif;
+            font-size: 0.95rem; letter-spacing: 2.5px;
+            padding: 12px 34px;
+            background: linear-gradient(180deg, #fff6c8 0%, #ffd700 50%, #ff9d00 100%);
+            box-shadow: 0 8px 26px rgba(255, 180, 0, 0.65), inset 0 2px 3px rgba(255, 255, 255, 0.7);
+        }
+
+        /* Chunkier gold jackpot ticker */
+        .ticker-bar {
+            background: linear-gradient(180deg, rgba(74, 44, 6, 0.9) 0%, rgba(24, 12, 2, 0.94) 100%);
+            border-bottom: 2px solid rgba(255, 215, 0, 0.45);
+            font-size: 0.95rem; padding: 10px;
+            box-shadow: 0 4px 18px rgba(255, 180, 0, 0.25);
+        }
+        .jackpot-val {
+            font-family: 'Baloo 2', 'Montserrat', sans-serif;
+            font-size: 1.25rem; color: #ffd700;
+            text-shadow: 0 0 16px rgba(255, 200, 0, 0.9), 0 2px 0 rgba(90, 50, 0, 0.8);
+        }
+
+        /* Glossier coin pills + buy button */
+        .coin-box {
+            background: linear-gradient(180deg, #2c1654 0%, #120826 100%);
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.14), 0 0 12px rgba(0, 0, 0, 0.4);
+        }
+        .action-buy {
+            background: linear-gradient(180deg, #fff6c8 0%, #ffd700 50%, #ff9d00 100%);
+            box-shadow: 0 6px 22px rgba(255, 180, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.7);
+            font-family: 'Baloo 2', 'Montserrat', sans-serif; font-size: 0.92rem; letter-spacing: 1.5px;
+        }
+        .cur-toggle, .pkg-buy, .pkg-badge, .welcome-claim {
+            font-family: 'Baloo 2', 'Montserrat', sans-serif;
+        }
+        .gs-title { font-size: 1.25rem; }
     </style>
 </head>
 <body>
@@ -553,15 +734,16 @@
 
         <h2 class="menu-title"><span class="accent">Hot</span> Premium Games</h2>
         <div class="lobby-grid" id="lobby">
-            <button class="game-wrapper featured" data-game="Wild Safari" aria-label="Play Wild Safari, featured slot">
+            <button class="game-wrapper featured acc-gold" data-game="Wild Safari" aria-label="Play Wild Safari, featured slot">
                 <span class="shine"></span>
+                <span class="card-badge gold">HOT</span>
                 <div class="game-banner" style="background-image: url('art-wild-safari.jpg');">
                     <div class="game-art-shade"></div>
                 </div>
                 <div class="play-pill">Play</div>
                 <div class="game-info"><div class="game-tag">Featured Slot</div><div class="game-name">Wild Safari</div></div>
             </button>
-            <button class="game-wrapper" data-game="Volt Strike" aria-label="Play Volt Strike, slots">
+            <button class="game-wrapper acc-teal" data-game="Volt Strike" aria-label="Play Volt Strike, slots">
                 <span class="shine"></span>
                 <div class="game-banner" style="background-image: url('art-volt-strike.jpg');">
                     <div class="game-art-shade"></div>
@@ -569,15 +751,16 @@
                 <div class="play-pill">Play</div>
                 <div class="game-info"><div class="game-tag">Slots</div><div class="game-name">Volt Strike</div></div>
             </button>
-            <button class="game-wrapper" data-game="Mystic Fortune" aria-label="Play Mystic Fortune, jackpot">
+            <button class="game-wrapper acc-purple" data-game="Mystic Fortune" aria-label="Play Mystic Fortune, jackpot">
                 <span class="shine"></span>
+                <span class="card-jackpot" data-jpbase="48210.55">$48,210.55</span>
                 <div class="game-banner" style="background-image: url('art-mystic-fortune.jpg');">
                     <div class="game-art-shade"></div>
                 </div>
                 <div class="play-pill">Play</div>
                 <div class="game-info"><div class="game-tag">Jackpot</div><div class="game-name">Mystic Fortune</div></div>
             </button>
-            <button class="game-wrapper" data-game="Neon Rush" aria-label="Play Neon Rush, slots">
+            <button class="game-wrapper acc-pink" data-game="Neon Rush" aria-label="Play Neon Rush, slots">
                 <span class="shine"></span>
                 <div class="game-banner" style="background-image: url('art-neon-rush.jpg');">
                     <div class="game-art-shade"></div>
@@ -585,21 +768,84 @@
                 <div class="play-pill">Play</div>
                 <div class="game-info"><div class="game-tag">Slots</div><div class="game-name">Neon Rush</div></div>
             </button>
-            <button class="game-wrapper" data-game="Gold Rush" aria-label="Play Gold Rush, new slots">
+            <button class="game-wrapper acc-orange" data-game="Gold Rush" aria-label="Play Gold Rush, new slots">
                 <span class="shine"></span>
+                <span class="card-badge">NEW</span>
                 <div class="game-banner" style="background-image: url('art-gold-rush.jpg');">
                     <div class="game-art-shade"></div>
                 </div>
                 <div class="play-pill">Play</div>
                 <div class="game-info"><div class="game-tag">New Slots</div><div class="game-name">Gold Rush</div></div>
             </button>
-            <button class="game-wrapper" data-game="Lucky Pigs" aria-label="Play Lucky Pigs, new slots">
+            <button class="game-wrapper acc-red" data-game="Lucky Pigs" aria-label="Play Lucky Pigs, new slots">
                 <span class="shine"></span>
+                <span class="card-badge">NEW</span>
                 <div class="game-banner" style="background-image: url('art-lucky-pigs.jpg');">
                     <div class="game-art-shade"></div>
                 </div>
                 <div class="play-pill">Play</div>
                 <div class="game-info"><div class="game-tag">New Slots</div><div class="game-name">Lucky Pigs</div></div>
+            </button>
+            <button class="game-wrapper acc-green" data-game="Lucky Leprechaun" aria-label="Play Lucky Leprechaun, lucky slots">
+                <span class="shine"></span>
+                <span class="card-badge">NEW</span>
+                <div class="game-banner" style="background-image: url('art-lucky-leprechaun.jpg');">
+                    <div class="game-art-shade"></div>
+                </div>
+                <div class="play-pill">Play</div>
+                <div class="game-info"><div class="game-tag">Lucky Slots</div><div class="game-name">Lucky Leprechaun</div></div>
+            </button>
+            <button class="game-wrapper acc-blue" data-game="Three Pigs" aria-label="Play Three Pigs, fairy tale slots">
+                <span class="shine"></span>
+                <span class="card-badge">NEW</span>
+                <div class="game-banner" style="background-image: url('art-three-pigs.jpg');">
+                    <div class="game-art-shade"></div>
+                </div>
+                <div class="play-pill">Play</div>
+                <div class="game-info"><div class="game-tag">Fairy Tale</div><div class="game-name">Three Pigs</div></div>
+            </button>
+            <button class="game-wrapper acc-purple" data-game="Count Dracula" aria-label="Play Count Dracula, dark slots">
+                <span class="shine"></span>
+                <span class="card-badge">NEW</span>
+                <div class="game-banner" style="background-image: url('art-count-dracula.jpg');">
+                    <div class="game-art-shade"></div>
+                </div>
+                <div class="play-pill">Play</div>
+                <div class="game-info"><div class="game-tag">Dark Slots</div><div class="game-name">Count Dracula</div></div>
+            </button>
+            <button class="game-wrapper acc-gold" data-game="Golden Empire" aria-label="Play Golden Empire, jackpot slots">
+                <span class="shine"></span>
+                <span class="card-jackpot" data-jpbase="96402.20">$96,402.20</span>
+                <div class="game-banner" style="background-image: url('art-golden-empire.jpg');">
+                    <div class="game-art-shade"></div>
+                </div>
+                <div class="play-pill">Play</div>
+                <div class="game-info"><div class="game-tag">Jackpot</div><div class="game-name">Golden Empire</div></div>
+            </button>
+            <button class="game-wrapper acc-orange" data-game="TNT Blast" aria-label="Play TNT Blast, slots">
+                <span class="shine"></span>
+                <div class="game-banner" style="background-image: url('art-tnt-blast.jpg');">
+                    <div class="game-art-shade"></div>
+                </div>
+                <div class="play-pill">Play</div>
+                <div class="game-info"><div class="game-tag">Slots</div><div class="game-name">TNT Blast</div></div>
+            </button>
+            <button class="game-wrapper acc-teal" data-game="Buffalo Run" aria-label="Play Buffalo Run, slots">
+                <span class="shine"></span>
+                <div class="game-banner" style="background-image: url('art-buffalo-run.jpg');">
+                    <div class="game-art-shade"></div>
+                </div>
+                <div class="play-pill">Play</div>
+                <div class="game-info"><div class="game-tag">Slots</div><div class="game-name">Buffalo Run</div></div>
+            </button>
+            <button class="game-wrapper acc-green" data-game="Scratch &amp; Win" aria-label="Play Scratch and Win, scratch card">
+                <span class="shine"></span>
+                <span class="card-badge">NEW</span>
+                <div class="game-banner" style="background-image: url('art-scratch.jpg');">
+                    <div class="game-art-shade"></div>
+                </div>
+                <div class="play-pill">Play</div>
+                <div class="game-info"><div class="game-tag">Scratch</div><div class="game-name">Scratch &amp; Win</div></div>
             </button>
         </div>
     </main>
@@ -650,13 +896,14 @@
         <div class="hc-earned" id="hc-earned"></div>
 
         <div class="gs-stats">
-            <div class="stat balance"><div class="label">Balance (GC)</div><div class="value" id="gs-balance">$0.00</div></div>
+            <div class="stat balance"><div class="label" id="gs-bal-label">Balance (GC)</div><div class="value" id="gs-balance">$0.00</div></div>
             <div class="stat"><div class="label">Bet</div><div class="value" id="gs-betview">$1.00</div></div>
             <div class="stat"><div class="label">Last Win</div><div class="value" id="gs-lastwin">$0.00</div></div>
             <div class="stat hcstat"><div class="label">HC</div><div class="value" id="gs-hc">0.00</div></div>
         </div>
 
         <div class="gs-controls">
+            <button class="cur-toggle" id="cur-toggle" type="button" aria-label="Switch between Gold Coins and Sweeps Coins">GC</button>
             <div class="bet-ctrl" aria-label="Bet controls">
                 <button class="bet-btn" id="bet-down" type="button" aria-label="Decrease bet">&minus;</button>
                 <div class="bet-val" id="bet-val">$1.00</div>
@@ -667,6 +914,49 @@
 
         <div class="gs-links">
             <button class="gs-link" id="paytable-btn" type="button">Paytable</button>
+        </div>
+    </section>
+
+    <!-- ================= SCRATCH & WIN ================= -->
+    <section class="game-screen" id="scratch-screen" hidden aria-label="Scratch and win game">
+        <div class="gs-backdrop" id="sc-backdrop"></div>
+        <div class="gs-top">
+            <button class="gs-icon-btn" id="sc-close" type="button" aria-label="Back to lobby">&#8592;</button>
+            <div class="gs-title">Scratch &amp; Win</div>
+            <button class="gs-icon-btn" id="sc-sound" type="button" aria-label="Toggle sound">&#9836;</button>
+        </div>
+
+        <div class="cabinet">
+            <div class="marquee" id="sc-marquee" aria-hidden="true"></div>
+            <div class="sc-table">
+                <div class="sc-card" id="sc-card" aria-label="Scratch card"></div>
+                <div class="sc-msg" id="sc-msg">Buy a card, then scratch the 9 panels.</div>
+            </div>
+        </div>
+
+        <div class="win-display" id="sc-win-display"></div>
+        <div class="hc-earned" id="sc-hc-earned"></div>
+
+        <div class="gs-stats">
+            <div class="stat balance"><div class="label" id="sc-bal-label">Balance (GC)</div><div class="value" id="sc-balance">$0.00</div></div>
+            <div class="stat"><div class="label">Card Price</div><div class="value" id="sc-betview">$1.00</div></div>
+            <div class="stat"><div class="label">Last Win</div><div class="value" id="sc-lastwin">$0.00</div></div>
+            <div class="stat hcstat"><div class="label">HC</div><div class="value" id="sc-hc">0.00</div></div>
+        </div>
+
+        <div class="gs-controls">
+            <button class="cur-toggle" id="sc-cur-toggle" type="button" aria-label="Switch between Gold Coins and Sweeps Coins">GC</button>
+            <div class="bet-ctrl" aria-label="Card price controls">
+                <button class="bet-btn" id="sc-bet-down" type="button" aria-label="Decrease card price">&minus;</button>
+                <div class="bet-val" id="sc-bet-val">$1.00</div>
+                <button class="bet-btn" id="sc-bet-up" type="button" aria-label="Increase card price">+</button>
+            </div>
+            <button class="spin-btn" id="sc-buy" type="button">Buy Card</button>
+        </div>
+
+        <div class="gs-links">
+            <button class="gs-link" id="sc-reveal" type="button">Reveal All</button>
+            <span class="sc-payhint" id="sc-payhint"></span>
         </div>
     </section>
 
@@ -697,6 +987,39 @@
                 The more you play, the more you stack. You're getting in at the very beginning.
             </p>
             <button class="modal-close" type="button" id="hc-close">Close</button>
+        </div>
+    </div>
+
+    <!-- Welcome $25 sign-up bonus -->
+    <div class="modal-backdrop" id="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+        <div class="modal welcome-modal">
+            <div class="welcome-kicker">Welcome to Honcho's</div>
+            <h3 id="welcome-title">Sign-Up Bonus</h3>
+            <div class="welcome-amount">$25.00</div>
+            <p class="pay-note">Your <b>$25 FREE PLAY</b> sign-up bonus — credited instantly in Sweeps Coins. No deposit needed. Good luck!</p>
+            <button class="modal-close welcome-claim" type="button" id="welcome-claim">Claim $25 Free Play</button>
+        </div>
+    </div>
+
+    <!-- Coin store -->
+    <div class="modal-backdrop" id="store-modal" role="dialog" aria-modal="true" aria-labelledby="store-title">
+        <div class="modal store-modal">
+            <h3 id="store-title">Coin Store</h3>
+            <p class="pay-note">Every package comes with <b>FREE Sweeps Coins</b>.</p>
+            <div class="pkg-list" id="pkg-list"></div>
+            <button class="gs-link" type="button" id="demo-gc-btn">Just give me 1,000 free demo Gold Coins</button>
+            <button class="modal-close" type="button" id="store-close">Close</button>
+        </div>
+    </div>
+
+    <!-- Checkout -->
+    <div class="modal-backdrop" id="checkout-modal" role="dialog" aria-modal="true" aria-labelledby="co-title">
+        <div class="modal">
+            <h3 id="co-title">Checkout</h3>
+            <div class="co-summary" id="co-summary"></div>
+            <p class="pay-note" id="co-note">Demo checkout — no real charge is made. Your coins are credited instantly.</p>
+            <button class="modal-close co-pay" type="button" id="co-pay">Pay</button>
+            <button class="gs-link" type="button" id="co-cancel">Cancel</button>
         </div>
     </div>
 
@@ -806,7 +1129,30 @@
         /* ================= Wallet (demo credits, persisted) ================= */
         var gc = parseFloat(localStorage.getItem('honcho_gc'));
         if (isNaN(gc)) { gc = 1250.00; }
-        var sc = 42.75;
+        var sc = parseFloat(localStorage.getItem('honcho_sc'));
+        if (isNaN(sc)) { sc = 42.75; }
+        function saveSC() { try { localStorage.setItem('honcho_sc', sc.toFixed(2)); } catch (e) {} }
+
+        /* Active play currency: Gold Coins or Sweeps Coins. HC is earned on top, always. */
+        var playSC = false;
+        function curName() { return playSC ? 'SC' : 'GC'; }
+        function curBal() { return playSC ? sc : gc; }
+        function setCur(v) { v = Math.round(v * 100) / 100; if (playSC) { sc = v; saveSC(); } else { gc = v; saveGC(); } }
+        function addCur(n) { setCur(curBal() + n); }
+        function paintCurUI() {
+            var lbl = $('gs-bal-label'); if (lbl) lbl.textContent = 'Balance (' + curName() + ')';
+            var t = $('cur-toggle'); if (t) t.textContent = curName();
+            var slbl = $('sc-bal-label'); if (slbl) slbl.textContent = 'Balance (' + curName() + ')';
+            var st = $('sc-cur-toggle'); if (st) st.textContent = curName();
+            updateWallet();
+        }
+        function toggleCur() {
+            if (typeof inFS !== 'undefined' && inFS) { toast('Finish free spins before switching coins'); return; }
+            if (typeof scActive !== 'undefined' && scActive) { toast('Finish this card before switching coins'); return; }
+            playSC = !playSC;
+            paintCurUI();
+            toast(playSC ? 'Playing with Sweeps Coins' : 'Playing with Gold Coins');
+        }
         var hc = parseFloat(localStorage.getItem('honcho_hc'));
         if (isNaN(hc)) { hc = 0; }
         function saveGC() { try { localStorage.setItem('honcho_gc', gc.toFixed(2)); } catch (e) {} }
@@ -814,19 +1160,28 @@
         function updateWallet() {
             $('gc-balance').textContent = gc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             $('sc-balance').textContent = sc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            $('gs-balance').textContent = fmt(gc);
+            $('gs-balance').textContent = fmt(curBal());
             var hct = hc.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             $('hc-balance').textContent = hct;
             $('gs-hc').textContent = hct;
+            var sch = $('sc-hc'); if (sch) sch.textContent = hct;
+            var scb = $('sc-balance'); if (scb) scb.textContent = fmt(curBal());
             var hmb = $('hc-modal-balance');
             if (hmb) hmb.textContent = hct;
         }
 
         /* ================= Jackpot ticker ================= */
         var jackpot = 1842905.10;
+        var cardJps = Array.prototype.slice.call(document.querySelectorAll('.card-jackpot')).map(function (el) {
+            return { el: el, val: parseFloat(el.getAttribute('data-jpbase')) || 0 };
+        });
         setInterval(function () {
             jackpot += Math.random() * 3.50;
             $('jackpot').textContent = '$' + jackpot.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            cardJps.forEach(function (c) {
+                c.val += Math.random() * 0.85;
+                c.el.textContent = '$' + c.val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            });
         }, 2500);
 
         /* ================= Slot engine ================= */
@@ -865,7 +1220,25 @@
                 ['#ffd700', '#ffffff', '#ff9f1a', '#ffe14d', '#ffb347', '#00f0ff', '#ff4d6d', '#fff3b0', '#ff2d95']),
             'Lucky Pigs': T(
                 ['🐷', 'W', '🐖', '🪙', '🍀', '🌽', '🥕', '🏡', 'S'],
-                ['#ff9ec7', '#ffffff', '#ff7bab', '#ffd700', '#4dff88', '#ffe14d', '#ff9f1a', '#c77dff', '#ff2d95'])
+                ['#ff9ec7', '#ffffff', '#ff7bab', '#ffd700', '#4dff88', '#ffe14d', '#ff9f1a', '#c77dff', '#ff2d95']),
+            'Lucky Leprechaun': T(
+                ['🍯', 'W', '🧙', '🌈', '🍀', '🎻', '🎩', '🐴', 'S'],
+                ['#ffd700', '#ffffff', '#4dff88', '#ff9ec7', '#66ff99', '#ffb347', '#2e7d32', '#c0c0c0', '#ff2d95']),
+            'Three Pigs': T(
+                ['🐷', 'W', '🐺', '🌾', '🪵', '🧱', '🎻', '🏠', 'S'],
+                ['#ff9ec7', '#ffffff', '#8d6e63', '#ffe14d', '#a1887f', '#b0bec5', '#ffb347', '#ff8a65', '#ff2d95']),
+            'Count Dracula': T(
+                ['🧛', 'W', '🦇', '🏰', '⚰️', '🌕', '🧄', '🍷', 'S'],
+                ['#b71c1c', '#ffffff', '#4a148c', '#78909c', '#5d4037', '#ff5252', '#e0e0e0', '#880e4f', '#ff2d95']),
+            'Golden Empire': T(
+                ['👑', 'W', '🥇', '🏛️', '⚜️', '💎', '🪙', '🎁', 'S'],
+                ['#ffd700', '#ffffff', '#ffca28', '#ffe082', '#fff3b0', '#00f0ff', '#ffe14d', '#ff9f1a', '#ff2d95']),
+            'TNT Blast': T(
+                ['🧨', 'W', '💥', '🛒', '⛑️', '💰', '🎇', '🛢️', 'S'],
+                ['#ff3d00', '#ffffff', '#ff9100', '#a1887f', '#ffe14d', '#ffd700', '#fff3b0', '#8d6e63', '#ff2d95']),
+            'Buffalo Run': T(
+                ['🦬', 'W', '🦅', '🐺', '🌅', '🪶', '🧿', '🌵', 'S'],
+                ['#8d6e63', '#ffffff', '#5d4037', '#78909c', '#ff9f1a', '#e0e0e0', '#00f0ff', '#4dff88', '#ff2d95'])
         };
         /* Gold Rush exclusive: BONUS symbol triggers the Gold Nugget pick bonus */
         THEMES['Gold Rush'].push({ id: 'bonus', glyph: 'BONUS', color: '#ffb300', weight: 2, bonus: true });
@@ -878,8 +1251,14 @@
             'Volt Strike': ['volt-strike/bolt', 'shared/wild', 'volt-strike/battery', 'volt-strike/storm', 'volt-strike/bulb', 'volt-strike/plug', 'volt-strike/gear', 'volt-strike/nut', 'shared/scatter'],
             'Mystic Fortune': ['mystic-fortune/crystalball', 'shared/wild', 'mystic-fortune/moon', 'mystic-fortune/star', 'mystic-fortune/joker', 'mystic-fortune/key', 'mystic-fortune/candle', 'mystic-fortune/sparkles', 'shared/scatter'],
             'Neon Rush': ['neon-rush/fireworks', 'shared/wild', 'neon-rush/slotmachine', 'neon-rush/cherries', 'neon-rush/disc', 'neon-rush/headphones', 'neon-rush/cassette', 'neon-rush/alien', 'shared/scatter'],
-            'Gold Rush': ['gold-rush/moneybag', 'shared/wild', 'gold-rush/pickaxe', 'gold-rush/coins', 'gold-rush/trophy', 'gold-rush/diamond', 'gold-rush/dynamite', 'gold-rush/lantern', 'shared/scatter'],
-            'Lucky Pigs': ['lucky-pigs/pigface', 'shared/wild', 'lucky-pigs/pig', 'lucky-pigs/coin', 'lucky-pigs/clover', 'lucky-pigs/corn', 'lucky-pigs/carrot', 'lucky-pigs/house', 'shared/scatter']
+            'Gold Rush': ['gold-rush/moneybag', 'shared/wild', 'gold-rush/pickaxe', 'gold-rush/coins', 'gold-rush/trophy', 'gold-rush/diamond', 'gold-rush/dynamite', 'gold-rush/lantern', 'shared/scatter', 'gold-rush/bonus'],
+            'Lucky Pigs': ['lucky-pigs/pigface', 'shared/wild', 'lucky-pigs/pig', 'lucky-pigs/coin', 'lucky-pigs/clover', 'lucky-pigs/corn', 'lucky-pigs/carrot', 'lucky-pigs/house', 'shared/scatter'],
+            'Lucky Leprechaun': ['lucky-leprechaun/potofgold', 'shared/wild', 'lucky-leprechaun/leprechaun', 'lucky-leprechaun/rainbow', 'lucky-leprechaun/horseshoe', 'lucky-leprechaun/harp', 'lucky-leprechaun/tophat', 'lucky-leprechaun/shamrock', 'shared/scatter'],
+            'Three Pigs': ['three-pigs/piggy', 'shared/wild', 'three-pigs/wolf', 'three-pigs/strawhouse', 'three-pigs/woodhouse', 'three-pigs/brickhouse', 'three-pigs/fiddle', 'three-pigs/haybale', 'shared/scatter'],
+            'Count Dracula': ['count-dracula/dracula', 'shared/wild', 'count-dracula/bats', 'count-dracula/castle', 'count-dracula/coffin', 'count-dracula/bloodmoon', 'count-dracula/fangs', 'count-dracula/goblet', 'shared/scatter'],
+            'Golden Empire': ['golden-empire/crown', 'shared/wild', 'golden-empire/goldbar', 'golden-empire/palace', 'golden-empire/scepter', 'golden-empire/emerald', 'golden-empire/throne', 'golden-empire/chest', 'shared/scatter'],
+            'TNT Blast': ['tnt-blast/dynamite', 'shared/wild', 'tnt-blast/explosion', 'tnt-blast/minecart', 'tnt-blast/helmet', 'tnt-blast/goldnugget', 'tnt-blast/fuse', 'tnt-blast/barrel', 'shared/scatter'],
+            'Buffalo Run': ['buffalo-run/buffalo', 'shared/wild', 'buffalo-run/eagle', 'buffalo-run/coyote', 'buffalo-run/sunset', 'buffalo-run/feather', 'buffalo-run/dreamcatcher', 'buffalo-run/cactus', 'shared/scatter']
         };
         var artOK = {};
         function symURL(key) { return 'sym-' + key.replace('/', '-') + '.jpg'; }
@@ -998,8 +1377,8 @@
             if (spinning) return;
             var isFree = freeSpins > 0;
             if (!isFree) {
-                if (gc < bet) { toast('Not enough GC \u2014 tap Buy Coins for free demo credits'); return; }
-                gc = Math.round((gc - bet) * 100) / 100;
+                if (curBal() < bet) { toast(playSC ? 'Not enough SC \u2014 switch to Gold Coins or claim the sign-up bonus' : 'Not enough GC \u2014 tap Buy Coins for free demo credits'); return; }
+                addCur(-bet);
             }
             spinning = true;
             $('spin-btn').disabled = true;
@@ -1084,7 +1463,7 @@
             $('hc-earned').textContent = '+' + hcEarn.toFixed(2) + ' HC earned';
 
             if (totalWin > 0) {
-                gc = Math.round((gc + totalWin) * 100) / 100;
+                addCur(totalWin);
                 Object.keys(winCells).forEach(function (k) {
                     var parts = k.split('-');
                     var cell = reelCols[+parts[0]].cells[+parts[1]];
@@ -1164,8 +1543,8 @@
                             } else {
                                 done = true;
                                 sub.textContent = 'Nice haul! Tap to continue';
-                                gc = Math.round((gc + total) * 100) / 100;
-                                saveGC(); updateWallet();
+                                addCur(total);
+                                updateWallet();
                                 sndFanfare();
                                 coinBurst(80);
                                 setTimeout(function () {
@@ -1220,7 +1599,11 @@
         var ART = {
             'Wild Safari': 'art-wild-safari.jpg', 'Volt Strike': 'art-volt-strike.jpg',
             'Mystic Fortune': 'art-mystic-fortune.jpg', 'Neon Rush': 'art-neon-rush.jpg',
-            'Gold Rush': 'art-gold-rush.jpg', 'Lucky Pigs': 'art-lucky-pigs.jpg'
+            'Gold Rush': 'art-gold-rush.jpg', 'Lucky Pigs': 'art-lucky-pigs.jpg',
+            'Lucky Leprechaun': 'art-lucky-leprechaun.jpg', 'Three Pigs': 'art-three-pigs.jpg',
+            'Count Dracula': 'art-count-dracula.jpg', 'Golden Empire': 'art-golden-empire.jpg',
+            'TNT Blast': 'art-tnt-blast.jpg', 'Buffalo Run': 'art-buffalo-run.jpg',
+            'Scratch & Win': 'art-scratch.jpg'
         };
         async function launchGame(name) {
             gameOpen = true;
@@ -1236,7 +1619,7 @@
             $('gs-title').textContent = name;
             $('game-screen').hidden = false;
             document.body.style.overflow = 'hidden';
-            updateWallet();
+            paintCurUI();
             $('gs-close').focus();
         }
         function closeGame() {
@@ -1254,6 +1637,10 @@
                 $('paytable-modal').classList.remove('open');
             } else if (e.key === 'Escape' && $('hc-modal').classList.contains('open')) {
                 $('hc-modal').classList.remove('open');
+            } else if (e.key === 'Escape' && $('welcome-modal').classList.contains('open')) {
+                $('welcome-modal').classList.remove('open');
+            } else if (e.key === 'Escape' && scOpen && $('bigwin').hidden) {
+                closeScratch();
             }
         });
 
@@ -1274,13 +1661,16 @@
 
         $('lobby').addEventListener('click', function (e) {
             var card = e.target.closest('.game-wrapper');
-            if (card) launchGame(card.dataset.game);
+            if (!card) return;
+            if (card.dataset.game === 'Scratch & Win') openScratch();
+            else launchGame(card.dataset.game);
         });
 
         /* ================= Sound toggle ================= */
         $('gs-sound').addEventListener('click', function () {
             muted = !muted;
             $('gs-sound').style.opacity = muted ? '0.4' : '1';
+            var ss = $('sc-sound'); if (ss) ss.style.opacity = muted ? '0.4' : '1';
             toast(muted ? 'Sound off' : 'Sound on');
         });
 
@@ -1323,8 +1713,72 @@
             if (e.target === $('hc-modal')) $('hc-modal').classList.remove('open');
         });
 
-        /* ================= Buy coins (demo credits) ================= */
+        /* ================= Coin store & $9 package ================= */
+        /* Paste your Stripe Payment Links here (one per package) to take REAL payments.
+           In each link's settings: "After payment" -> redirect to
+           https://honchos-entertainment.onrender.com/?pkg=p5  (p9 / p25 for the others) */
+        var STRIPE_LINKS = { p5: '', p9: '', p25: '' };
+        var PKGS = [
+            { id: 'p5',  price: 4.99,  gc: 45000,  sc: 10 },
+            { id: 'p9',  price: 9.00,  gc: 90000,  sc: 25, popular: true },
+            { id: 'p25', price: 24.99, gc: 250000, sc: 75 }
+        ];
+        var coPkg = null;
+        function fmtInt(n) { return n.toLocaleString('en-US'); }
+        function buildStore() {
+            var list = $('pkg-list'); list.innerHTML = '';
+            PKGS.forEach(function (p) {
+                var d = document.createElement('div');
+                d.className = 'pkg' + (p.popular ? ' popular' : '');
+                d.innerHTML = (p.popular ? '<div class="pkg-badge">MOST POPULAR</div>' : '') +
+                    '<div class="pkg-gc">' + fmtInt(p.gc) + ' <span>Gold Coins</span></div>' +
+                    '<div class="pkg-sc">+ $' + p.sc.toFixed(2) + ' FREE <span>Sweeps Coins</span></div>' +
+                    '<button class="pkg-buy" type="button">Buy $' + p.price.toFixed(2) + '</button>';
+                d.querySelector('.pkg-buy').addEventListener('click', function () { openCheckout(p); });
+                list.appendChild(d);
+            });
+        }
+        function openCheckout(p) {
+            coPkg = p;
+            $('co-summary').innerHTML = '<b>' + fmtInt(p.gc) + ' Gold Coins</b><br>+' +
+                ' <b style="color:#7CFC00">$' + p.sc.toFixed(2) + ' FREE Sweeps Coins</b><br>' +
+                '<span style="color:var(--text-dim)">Total: $' + p.price.toFixed(2) + '</span>';
+            $('co-pay').textContent = 'Pay $' + p.price.toFixed(2);
+            $('co-note').textContent = STRIPE_LINKS[p.id]
+                ? 'You will be taken to secure Stripe checkout to complete your purchase.'
+                : 'Demo checkout \u2014 no real charge is made. Your coins are credited instantly.';
+            $('store-modal').classList.remove('open');
+            $('checkout-modal').classList.add('open');
+        }
+        $('co-pay').addEventListener('click', function () {
+            if (!coPkg) return;
+            if (STRIPE_LINKS[coPkg.id]) {
+                window.open(STRIPE_LINKS[coPkg.id], '_blank', 'noopener');
+                $('checkout-modal').classList.remove('open');
+                toast('Complete your purchase in the secure checkout tab');
+                return;
+            }
+            gc = Math.round((gc + coPkg.gc) * 100) / 100; saveGC();
+            sc = Math.round((sc + coPkg.sc) * 100) / 100; saveSC();
+            $('checkout-modal').classList.remove('open');
+            updateWallet();
+            coinBurst(120); sndFanfare();
+            toast('Package credited: ' + fmtInt(coPkg.gc) + ' GC + $' + coPkg.sc.toFixed(2) + ' SC!');
+            coPkg = null;
+        });
+        $('co-cancel').addEventListener('click', function () {
+            $('checkout-modal').classList.remove('open');
+            $('store-modal').classList.add('open');
+        });
         $('buy-btn').addEventListener('click', function () {
+            buildStore();
+            $('store-modal').classList.add('open');
+        });
+        $('store-close').addEventListener('click', function () { $('store-modal').classList.remove('open'); });
+        $('store-modal').addEventListener('click', function (e) {
+            if (e.target === $('store-modal')) $('store-modal').classList.remove('open');
+        });
+        $('demo-gc-btn').addEventListener('click', function () {
             gc = Math.round((gc + 1000) * 100) / 100;
             saveGC(); updateWallet();
             sndWin(false);
@@ -1332,9 +1786,262 @@
             toast('+1,000 demo GC added \u2014 have fun');
         });
 
+        /* Stripe return: credit the package when the buyer lands back on ?pkg=p9 */
+        (function () {
+            try {
+                var q = new URLSearchParams(location.search);
+                var pid = q.get('pkg');
+                if (!pid) return;
+                var p = null;
+                PKGS.forEach(function (x) { if (x.id === pid) p = x; });
+                if (!p || sessionStorage.getItem('credited_' + pid)) return;
+                sessionStorage.setItem('credited_' + pid, '1');
+                gc = Math.round((gc + p.gc) * 100) / 100; saveGC();
+                sc = Math.round((sc + p.sc) * 100) / 100; saveSC();
+                updateWallet();
+                coinBurst(150); sndFanfare();
+                toast('Payment received: ' + fmtInt(p.gc) + ' GC + $' + p.sc.toFixed(2) + ' SC!');
+                history.replaceState(null, '', location.pathname);
+            } catch (e) {}
+        })();
+
+        /* ================= Scratch & Win ================= */
+        var SC_BETS = [1, 2, 5, 10, 25];
+        var scBetIdx = 0, scBet = 1;
+        var scOpen = false, scActive = false, scEvaluating = false;
+        var scGrid = [], scRevealed = [];
+        var SC_SYMS = [
+            { key: 'scratch/coin',    emoji: '🪙', base: 2 },
+            { key: 'scratch/bell',    emoji: '🔔', base: 3 },
+            { key: 'scratch/star',    emoji: '⭐', base: 5 },
+            { key: 'scratch/diamond', emoji: '💎', base: 10 },
+            { key: 'scratch/seven',   emoji: '7️⃣', base: 25 },
+            { key: 'scratch/crown',   emoji: '👑', base: 50 }
+        ];
+        function scPreload() {
+            return Promise.all(SC_SYMS.map(function (s) {
+                return new Promise(function (res) {
+                    if (s.key in artOK) return res();
+                    var img = new Image();
+                    img.onload = function () { artOK[s.key] = true; res(); };
+                    img.onerror = function () { artOK[s.key] = false; res(); };
+                    img.src = symURL(s.key);
+                });
+            }));
+        }
+        function scPaintCover(cv) {
+            var ctx = cv.getContext('2d'), W = cv.width, H = cv.height, x;
+            var g = ctx.createLinearGradient(0, 0, W, H);
+            g.addColorStop(0, '#d4af37'); g.addColorStop(0.5, '#f6e27a'); g.addColorStop(1, '#b8860b');
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+            ctx.strokeStyle = 'rgba(120, 72, 0, 0.35)'; ctx.lineWidth = 3;
+            for (x = -H; x < W + H; x += 18) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + H, H); ctx.stroke(); }
+            ctx.fillStyle = 'rgba(90, 54, 0, 0.9)';
+            ctx.font = 'bold 64px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillText('?', W / 2, H / 2 + 4);
+            cv.classList.remove('gone');
+        }
+        function scBuildGrid() {
+            var card = $('sc-card'); card.innerHTML = '';
+            for (var i = 0; i < 9; i++) {
+                (function (i) {
+                    var cell = document.createElement('div');
+                    cell.className = 'sc-cell';
+                    var prize = document.createElement('div');
+                    prize.className = 'sc-prize';
+                    var cv = document.createElement('canvas');
+                    cv.className = 'sc-cover'; cv.width = 180; cv.height = 180;
+                    cell.appendChild(prize); cell.appendChild(cv);
+                    card.appendChild(cell);
+                    scPaintCover(cv);
+                    var scratching = false, dabs = 0;
+                    function dab(e) {
+                        var r = cv.getBoundingClientRect();
+                        var x = (e.clientX - r.left) * (cv.width / r.width);
+                        var y = (e.clientY - r.top) * (cv.height / r.height);
+                        var ctx = cv.getContext('2d');
+                        ctx.globalCompositeOperation = 'destination-out';
+                        ctx.beginPath(); ctx.arc(x, y, 24, 0, Math.PI * 2); ctx.fill();
+                        ctx.globalCompositeOperation = 'source-over';
+                        if (++dabs % 6 === 0) scMaybeReveal(i, cv);
+                    }
+                    cv.addEventListener('pointerdown', function (e) {
+                        if (!scActive || scRevealed[i]) return;
+                        scratching = true;
+                        try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+                        dab(e);
+                    });
+                    cv.addEventListener('pointermove', function (e) { if (scratching && scActive && !scRevealed[i]) dab(e); });
+                    function stop() { if (scratching) { scratching = false; scMaybeReveal(i, cv); } }
+                    cv.addEventListener('pointerup', stop);
+                    cv.addEventListener('pointercancel', stop);
+                })(i);
+            }
+        }
+        function scMaybeReveal(i, cv) {
+            if (scRevealed[i] || !scActive) return;
+            var d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
+            var clear = 0, total = 0, p;
+            for (p = 3; p < d.length; p += 32) { total++; if (d[p] < 128) clear++; }
+            if (clear / total > 0.42) scRevealCell(i);
+        }
+        function scRevealCell(i) {
+            if (scRevealed[i] || !scActive) return;
+            scRevealed[i] = true;
+            $('sc-card').children[i].querySelector('.sc-cover').classList.add('gone');
+            if (scRevealed.every(Boolean)) scEvaluate();
+        }
+        function scGenGrid() {
+            var weights = [30, 26, 20, 14, 7, 3];
+            function pick() {
+                var t = 0, i, r;
+                for (i = 0; i < weights.length; i++) t += weights[i];
+                r = Math.random() * t;
+                for (i = 0; i < weights.length; i++) { r -= weights[i]; if (r <= 0) return i; }
+                return 0;
+            }
+            var g = [], i;
+            for (i = 0; i < 9; i++) g.push(pick());
+            if (Math.random() < 0.40) {
+                var s = pick();
+                var spots = [0, 1, 2, 3, 4, 5, 6, 7, 8].sort(function () { return Math.random() - 0.5; }).slice(0, 3);
+                spots.forEach(function (p) { g[p] = s; });
+            }
+            return g;
+        }
+        function scRenderPrizes() {
+            var cells = $('sc-card').children;
+            for (var i = 0; i < 9; i++) {
+                var s = SC_SYMS[scGrid[i]];
+                var el = cells[i].querySelector('.sc-prize');
+                cells[i].classList.remove('won');
+                if (s.key && artOK[s.key]) el.innerHTML = '<img src="' + symURL(s.key) + '" alt="">';
+                else el.textContent = s.emoji;
+            }
+        }
+        function scSetBet(i) {
+            scBetIdx = (i + SC_BETS.length) % SC_BETS.length;
+            scBet = SC_BETS[scBetIdx];
+            $('sc-bet-val').textContent = fmt(scBet);
+            $('sc-betview').textContent = fmt(scBet);
+        }
+        $('sc-bet-down').addEventListener('click', function () { scSetBet(scBetIdx - 1); });
+        $('sc-bet-up').addEventListener('click', function () { scSetBet(scBetIdx + 1); });
+        $('sc-buy').addEventListener('click', function () {
+            if (!scOpen || scActive) return;
+            if (curBal() < scBet) { toast(playSC ? 'Not enough SC \u2014 switch to Gold Coins or claim the sign-up bonus' : 'Not enough GC \u2014 tap Buy Coins for free demo credits'); return; }
+            addCur(-scBet);
+            hc = Math.round((hc + 1) * 100) / 100; saveHC();
+            $('sc-hc-earned').textContent = '+1.00 HC earned';
+            $('sc-lastwin').textContent = fmt(0);
+            $('sc-win-display').textContent = '';
+            scGrid = scGenGrid();
+            scRevealed = []; for (var i = 0; i < 9; i++) scRevealed.push(false);
+            scActive = true; scEvaluating = false;
+            scBuildGrid(); scRenderPrizes();
+            $('sc-buy').disabled = true;
+            $('sc-msg').textContent = 'Scratch all 9 panels to reveal your symbols. Match 3+ to win!';
+            updateWallet();
+        });
+        $('sc-reveal').addEventListener('click', function () {
+            if (!scOpen || !scActive) return;
+            for (var i = 0; i < 9; i++) scRevealCell(i);
+        });
+        async function scEvaluate() {
+            if (scEvaluating) return;
+            scEvaluating = true; scActive = false;
+            $('sc-buy').disabled = false;
+            var counts = {}, i;
+            for (i = 0; i < 9; i++) counts[scGrid[i]] = (counts[scGrid[i]] || 0) + 1;
+            var win = 0, winSyms = [];
+            Object.keys(counts).forEach(function (k) {
+                var c = counts[k];
+                if (c >= 3) {
+                    var m = c >= 6 ? 25 : c >= 5 ? 10 : c >= 4 ? 3 : 1;
+                    win += SC_SYMS[k].base * m * scBet;
+                    winSyms.push(+k);
+                }
+            });
+            win = Math.round(win * 100) / 100;
+            var cells = $('sc-card').children;
+            if (win > 0) {
+                addCur(win);
+                var hcEarn = Math.round(win * 0.02 * 100) / 100;
+                hc = Math.round((hc + hcEarn) * 100) / 100; saveHC();
+                $('sc-hc-earned').textContent = '+' + (1 + hcEarn).toFixed(2) + ' HC earned';
+                for (i = 0; i < 9; i++) if (winSyms.indexOf(scGrid[i]) >= 0) cells[i].classList.add('won');
+                $('sc-lastwin').textContent = fmt(win);
+                $('sc-win-display').textContent = 'WINNER! ' + fmt(win);
+                $('sc-msg').textContent = 'Matched ' + winSyms.map(function (k) { return counts[k] + '\u00d7 ' + SC_SYMS[k].emoji; }).join(', ') + ' \u2014 you won ' + fmt(win) + '!';
+                sndWin(win >= scBet * 20); coinBurst(80);
+                if (win >= scBet * 20) await showBigWin(win, win >= scBet * 60 ? 'MEGA WIN!' : 'BIG WIN!');
+            } else {
+                $('sc-msg').textContent = 'No match this time \u2014 try another card!';
+                sndWin(false);
+            }
+            updateWallet();
+        }
+        function openScratch() {
+            scOpen = true;
+            if (ART['Scratch & Win']) $('sc-backdrop').style.backgroundImage = "url('" + ART['Scratch & Win'] + "')";
+            var m = $('sc-marquee');
+            if (!m.children.length) {
+                for (var i = 0; i < 14; i++) {
+                    var d = document.createElement('span');
+                    d.style.animationDelay = (i * 0.09) + 's';
+                    m.appendChild(d);
+                }
+            }
+            scActive = false; scEvaluating = false;
+            scBuildGrid();
+            var cells = $('sc-card').children;
+            for (var j = 0; j < 9; j++) cells[j].querySelector('.sc-prize').textContent = SC_SYMS[j % SC_SYMS.length].emoji;
+            $('sc-msg').textContent = 'Buy a card, then scratch the 9 panels.';
+            $('sc-payhint').textContent = 'Match 3+ symbols to win up to 1,250\u00d7 your card price!';
+            scSetBet(0);
+            lastFocused = document.activeElement;
+            $('game-screen').hidden = true;
+            $('scratch-screen').hidden = false;
+            document.body.style.overflow = 'hidden';
+            paintCurUI();
+            scPreload();
+            $('sc-close').focus();
+        }
+        function closeScratch() {
+            scOpen = false;
+            $('scratch-screen').hidden = true;
+            document.body.style.overflow = '';
+            if (lastFocused) lastFocused.focus();
+        }
+        $('sc-close').addEventListener('click', closeScratch);
+        $('sc-sound').addEventListener('click', function () {
+            muted = !muted;
+            $('gs-sound').style.opacity = muted ? '0.4' : '1';
+            $('sc-sound').style.opacity = muted ? '0.4' : '1';
+            toast(muted ? 'Sound off' : 'Sound on');
+        });
+        $('cur-toggle').addEventListener('click', toggleCur);
+        $('sc-cur-toggle').addEventListener('click', toggleCur);
+
         /* ================= Boot ================= */
         updateWallet();
         setBet(0);
+
+        /* ================= Welcome $25 sign-up bonus (first visit) ================= */
+        var welcomed = false;
+        try { welcomed = localStorage.getItem('honcho_welcomed') === '1'; } catch (e) {}
+        if (!welcomed) {
+            setTimeout(function () { $('welcome-modal').classList.add('open'); }, 900);
+        }
+        $('welcome-claim').addEventListener('click', function () {
+            sc = Math.round((sc + 25) * 100) / 100; saveSC();
+            try { localStorage.setItem('honcho_welcomed', '1'); } catch (e) {}
+            $('welcome-modal').classList.remove('open');
+            updateWallet();
+            coinBurst(120); sndFanfare();
+            toast('$25.00 free play credited \u2014 good luck!');
+        });
     </script>
 </body>
 </html>
