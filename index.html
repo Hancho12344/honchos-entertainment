@@ -203,6 +203,19 @@
             cursor: pointer; letter-spacing: 1px; transition: color 0.2s;
         }
         .footer-btn.active, .footer-btn:hover { color: #ffffff; }
+        .legal-foot {
+            text-align: center; font-size: 0.62rem; color: rgba(255,255,255,0.45);
+            padding: 18px 20px 8px; margin: 0; line-height: 1.6; letter-spacing: .3px;
+        }
+        .legal-links { text-align: center; padding: 0 20px 96px; margin: 0; font-size: 0.68rem; color: rgba(255,255,255,0.45); }
+        .legal-links button { background: none; border: none; color: rgba(255,255,255,0.65); text-decoration: underline; cursor: pointer; font-size: 0.68rem; padding: 4px 6px; letter-spacing: .3px; font-family: inherit; }
+        .legal-links button:hover { color: #ffffff; }
+        .legal-doc { text-align: left; max-height: 58vh; overflow-y: auto; padding-right: 6px; }
+        .legal-doc h4 { color: var(--gold-glow); margin: 14px 0 6px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: .8px; }
+        .legal-doc h4:first-child { margin-top: 0; }
+        .legal-doc p, .legal-doc li { font-size: 0.74rem; line-height: 1.65; color: rgba(255,255,255,0.85); margin: 6px 0; }
+        .legal-doc ul, .legal-doc ol { padding-left: 18px; margin: 6px 0; }
+        .legal-doc .doc-draft { font-size: 0.66rem; color: rgba(255,255,255,0.5); border: 1px dashed rgba(255,255,255,0.3); padding: 8px 10px; border-radius: 8px; }
         .action-buy {
             background: linear-gradient(135deg, #ffe97a 0%, #ffd700 45%, #ff9d00 100%);
             color: #3a2400; padding: 11px 30px; border-radius: 30px;
@@ -848,6 +861,8 @@
                 <div class="game-info"><div class="game-tag">Scratch</div><div class="game-name">Scratch &amp; Win</div></div>
             </button>
         </div>
+        <p class="legal-foot">Free-play demo &middot; GC, SC &amp; HC are virtual coins with no cash value and cannot be cashed out or redeemed &middot; No purchase necessary &middot; 18+</p>
+        <p class="legal-links"><button type="button" id="rules-link">Sweepstakes Rules</button> &middot; <button type="button" id="terms-link">Terms of Service</button> &middot; <button type="button" id="privacy-link">Privacy Policy</button></p>
     </main>
 
     <nav class="footer-bar" aria-label="Primary">
@@ -982,9 +997,10 @@
             <h3 id="hc-title">HC &middot; Honcho Coin</h3>
             <div class="pay-row"><span>Your HC balance</span><span class="pay-vals" id="hc-modal-balance">0.00</span></div>
             <p class="pay-note">
-                HC is Honcho's own platform coin, starting from <b>zero</b>.<br><br>
+                HC is Honcho's <b>free-play loyalty coin</b>.<br><br>
                 You earn <b>1 HC on every spin</b> plus <b>2% of every win</b>, automatically.
-                The more you play, the more you stack. You're getting in at the very beginning.
+                The more you play, the more you stack.<br><br>
+                HC has no cash or monetary value and cannot be cashed out, sold, transferred, or redeemed for money or prizes.
             </p>
             <button class="modal-close" type="button" id="hc-close">Close</button>
         </div>
@@ -997,6 +1013,7 @@
             <h3 id="welcome-title">Sign-Up Bonus</h3>
             <div class="welcome-amount">$25.00</div>
             <p class="pay-note">Your <b>$25 FREE PLAY</b> sign-up bonus — credited instantly in Sweeps Coins. No deposit needed. Good luck!</p>
+            <p class="pay-note" style="font-size:0.68rem;opacity:0.75">By claiming, you confirm you are 18 years or older and accept the Sweepstakes Rules.</p>
             <button class="modal-close welcome-claim" type="button" id="welcome-claim">Claim $25 Free Play</button>
         </div>
     </div>
@@ -1008,6 +1025,10 @@
             <p class="pay-note">Every package comes with <b>FREE Sweeps Coins</b>.</p>
             <div class="pkg-list" id="pkg-list"></div>
             <button class="gs-link" type="button" id="demo-gc-btn">Just give me 1,000 free demo Gold Coins</button>
+            <p class="pay-note" style="margin-top:10px">No purchase necessary to play or receive Sweeps Coins. <button class="gs-link" type="button" id="free-sc-btn">Get free Sweeps Coins by mail</button></p>
+            <div id="free-sc-info" hidden>
+                <p class="pay-note">To receive free Sweeps Coins without making a purchase, hand-print your full name, email address, and mailing address on a 3&frac12;&quot; x 5&quot; card and mail it in a stamped envelope to the address listed in the Sweepstakes Rules. One request per envelope. See Sweepstakes Rules for full details and limits.</p>
+            </div>
             <button class="modal-close" type="button" id="store-close">Close</button>
         </div>
     </div>
@@ -1020,6 +1041,80 @@
             <p class="pay-note" id="co-note">Demo checkout — no real charge is made. Your coins are credited instantly.</p>
             <button class="modal-close co-pay" type="button" id="co-pay">Pay</button>
             <button class="gs-link" type="button" id="co-cancel">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Sweepstakes Rules -->
+    <div class="modal-backdrop" id="rules-modal" role="dialog" aria-modal="true" aria-labelledby="rules-title">
+        <div class="modal">
+            <h3 id="rules-title">Sweepstakes Rules</h3>
+            <div class="legal-doc">
+            <p class="doc-draft"><b>DRAFT</b> — These official rules are prepared for attorney review before any real-money or prize activity. They are not legal advice.</p>
+            <h4>1. No purchase necessary</h4>
+            <p>No purchase is necessary to enter or win. Making a purchase does not improve your chances of winning. A free Alternate Method of Entry (AMOE) is always available (see section 3).</p>
+            <h4>2. Eligibility</h4>
+            <p>Open only to individuals 18 years of age or older (21+ where required by law). Void in California, Connecticut, Delaware, Idaho, Indiana, Louisiana, Maine, Michigan, Mississippi, Montana, Nevada, New Jersey, New York, Oklahoma, Tennessee, Washington, and any other jurisdiction where sweepstakes or social-casino promotions are prohibited. The operator blocks prohibited jurisdictions where technically feasible; it remains each player's responsibility to confirm eligibility before participating.</p>
+            <h4>3. How to obtain Sweeps Coins free</h4>
+            <ul>
+                <li><b>Sign-up bonus:</b> new players receive a free Sweeps Coins bonus on registration. Limit one per person.</li>
+                <li><b>Mail-in request (AMOE):</b> hand-print your full name, email address, and mailing address on a 3&frac12;" x 5" card and mail it in a stamped envelope to the operator address published in section 7. One request per envelope; each verified request is fulfilled with the posted free Sweeps Coins amount.</li>
+            </ul>
+            <h4>4. Virtual coins</h4>
+            <ul>
+                <li><b>Gold Coins (GC)</b> are for entertainment only. They have no cash or monetary value and cannot be redeemed, transferred, or exchanged for anything of value.</li>
+                <li><b>Sweeps Coins (SC)</b> are promotional sweepstakes entries used to play sweepstakes games. They cannot be purchased.</li>
+                <li><b>Honcho Coins (HC)</b> are a free-play loyalty coin. They have no cash or monetary value and cannot be cashed out, sold, transferred, or redeemed for money or prizes.</li>
+            </ul>
+            <h4>5. Redemptions</h4>
+            <p>Prize redemptions, if and when offered, require identity verification (government-issued ID, 18+), a 1x playthrough of Sweeps Coins, and anti-fraud review. Minimums, maximums, methods, and processing times are published when redemptions open. <b>No redemptions are currently offered:</b> all play is free demo entertainment.</p>
+            <h4>6. Responsible play</h4>
+            <p>This is a social-casino promotion, not gambling. If play stops being fun, stop playing. Help: NCPG helpline 1-800-522-4700.</p>
+            <h4>7. Operator</h4>
+            <p>Honcho's Entertainment. Mailing address for AMOE requests and questions: [TBD — operator to publish before launch]. Rules version 1.0 (draft).</p>
+        </div>
+            <button class="modal-close" type="button" id="rules-close">Close</button>
+        </div>
+    </div>
+
+    <!-- Terms of Service -->
+    <div class="modal-backdrop" id="terms-modal" role="dialog" aria-modal="true" aria-labelledby="terms-title">
+        <div class="modal">
+            <h3 id="terms-title">Terms of Service</h3>
+            <div class="legal-doc">
+            <p class="doc-draft"><b>DRAFT</b> — Prepared for attorney review. Not legal advice.</p>
+            <h4>1. The service</h4>
+            <p>Honcho's Entertainment provides free-play social-casino games using virtual coins. All coins (GC, SC, HC) are virtual, have no cash value, and cannot be redeemed for money or prizes except as expressly stated in the Sweepstakes Rules.</p>
+            <h4>2. Eligibility</h4>
+            <p>You must be 18 or older (21+ where required by law) and not located in a prohibited jurisdiction. Entries from prohibited jurisdictions are void.</p>
+            <h4>3. No purchase necessary</h4>
+            <p>Nothing on this site requires a purchase. Demo checkout never charges real money.</p>
+            <h4>4. Acceptable use</h4>
+            <p>No cheating, bots, exploits, or interference with the service. Violations may result in loss of virtual balances and access.</p>
+            <h4>5. Disclaimers</h4>
+            <p>The service is provided "as is." Virtual coins and features may be adjusted, reset, or discontinued at any time. The operator is not liable for interruptions or loss of virtual items.</p>
+            <h4>6. Changes</h4>
+            <p>These terms may change; continued use after changes means acceptance. Version 1.0 (draft).</p>
+        </div>
+            <button class="modal-close" type="button" id="terms-close">Close</button>
+        </div>
+    </div>
+
+    <!-- Privacy Policy -->
+    <div class="modal-backdrop" id="privacy-modal" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
+        <div class="modal">
+            <h3 id="privacy-title">Privacy Policy</h3>
+            <div class="legal-doc">
+            <p class="doc-draft"><b>DRAFT</b> — Prepared for attorney review. Not legal advice.</p>
+            <h4>1. Data we collect</h4>
+            <p>None on our servers. Game balances and preferences are stored only in your own browser (local storage) on your device.</p>
+            <h4>2. Data we do not collect</h4>
+            <p>We do not create accounts and do not collect names, emails, payment details, or location data through this demo site.</p>
+            <h4>3. If that changes</h4>
+            <p>If accounts, purchases, or redemptions are introduced, this policy will be updated before launch to describe what is collected, why, and your rights — and reviewed by counsel first.</p>
+            <h4>4. Contact</h4>
+            <p>Privacy questions: [TBD — operator to publish contact before launch]. Version 1.0 (draft).</p>
+        </div>
+            <button class="modal-close" type="button" id="privacy-close">Close</button>
         </div>
     </div>
 
@@ -1637,6 +1732,12 @@
                 $('paytable-modal').classList.remove('open');
             } else if (e.key === 'Escape' && $('hc-modal').classList.contains('open')) {
                 $('hc-modal').classList.remove('open');
+            } else if (e.key === 'Escape' && $('rules-modal').classList.contains('open')) {
+                $('rules-modal').classList.remove('open');
+            } else if (e.key === 'Escape' && $('terms-modal').classList.contains('open')) {
+                $('terms-modal').classList.remove('open');
+            } else if (e.key === 'Escape' && $('privacy-modal').classList.contains('open')) {
+                $('privacy-modal').classList.remove('open');
             } else if (e.key === 'Escape' && $('welcome-modal').classList.contains('open')) {
                 $('welcome-modal').classList.remove('open');
             } else if (e.key === 'Escape' && scOpen && $('bigwin').hidden) {
@@ -1711,6 +1812,19 @@
         $('hc-close').addEventListener('click', function () { $('hc-modal').classList.remove('open'); });
         $('hc-modal').addEventListener('click', function (e) {
             if (e.target === $('hc-modal')) $('hc-modal').classList.remove('open');
+        });
+
+        /* ================= Legal modals ================= */
+        [['rules-link', 'rules-modal', 'rules-close'], ['terms-link', 'terms-modal', 'terms-close'], ['privacy-link', 'privacy-modal', 'privacy-close']].forEach(function (t) {
+            $(t[0]).addEventListener('click', function () { $(t[1]).classList.add('open'); });
+            $(t[2]).addEventListener('click', function () { $(t[1]).classList.remove('open'); });
+            $(t[1]).addEventListener('click', function (e) {
+                if (e.target === $(t[1])) $(t[1]).classList.remove('open');
+            });
+        });
+        $('free-sc-btn').addEventListener('click', function () {
+            var el = $('free-sc-info');
+            el.hidden = !el.hidden;
         });
 
         /* ================= Coin store & $9 package ================= */
